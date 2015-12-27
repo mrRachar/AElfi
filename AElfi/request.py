@@ -14,7 +14,12 @@ class Request:
                             for arg in post.split('&'))
         self.header = {
             'user agent': os.environ['HTTP_USER_AGENT'],
-            #'ip': os.environ['REMOTE_ADDRESS'],
+            'ip': os.environ['REMOTE_ADDR'],
+            'server': os.environ['SEVER_NAME'],
+            'protocol': os.environ['SERVER_PROTOCOL'],
+            'connection type': os.environ['HTTP_CONNECTION'],
+            'method': os.environ['REQIEST_METHOD'],
+            'accepted language': os.environ['HTTP_ACCEPT_LANGUAGE'],
         }   
         self.__cookies = cookies.SimpleCookie()
         if 'HTTP_COOKIE' in os.environ:
