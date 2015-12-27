@@ -1,0 +1,4 @@
+RewriteEngine on
+RewriteCond %{REQUEST_FILENAME} !^AElfi/.*
+
+RewriteRule ^(.*)$ "AElfi/__init__.py?WF_PAGE=$1" [L,QSA]
