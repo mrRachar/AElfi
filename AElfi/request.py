@@ -54,7 +54,7 @@ class Response:
             return
         print('\n'.join('{}: {}'.format(k, v) for k, v in
                                                 self.header.items()))
-        if response.cookies:
+        if self.cookies:
             print(self.cookies)
         self.headersent = True
         print()
