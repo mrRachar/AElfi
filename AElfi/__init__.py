@@ -42,7 +42,13 @@ if not error:
 # Why IO Error above
 if ext == 'py':
     builtins.request, builtins.response = request, response
-    import env
+    try:
+        import env
+    except:
+        ext, request.page = config.errorresponses.get(500, ('txt', 'Error 500'))
+        error = True
+        print(request.page)
+
 else:
     print('Content-Type:', 
           config.extensions.get(ext, 'text/text') + ';' + config.charset + '\n')
