@@ -21,7 +21,7 @@ class Configuration:
         self.charset = config['Charset']
     def isprotected(self, file):
         for regex in self.protected:
-            if re.match(regex, file[3:]):
+            if re.match(regex, file[1:]):
                 return True
         else:
             return False

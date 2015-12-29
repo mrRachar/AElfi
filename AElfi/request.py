@@ -1,6 +1,6 @@
 #!usr/bin/env python3
 #-*- coding: UTF-8 -*-
-import os
+import os, sys
 from collections import OrderedDict as odict
 from http import cookies
 
@@ -63,14 +63,16 @@ class Response:
             print(self.cookies)
         self.headersent = True
         print()
+        sys.stdout.flush()
 
     @property
     def cookies(self) -> cookies.SimpleCookie:
         return self.__cookies
 
-    def print(self, *values, **kwargs):
+    def print(self, *values, sep=' ', end='\n'):
         if not self.headersent:
             self.sendheader()
-        print(*values, **kwargs)
+        sys.stdout.buffer.write(sep.encode('utf-8').join(value.encode('utf-8') for value in values) + end.encode('utf-8'))
+        sys.stdout.flush()
     
         

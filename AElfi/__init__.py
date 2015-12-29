@@ -2,15 +2,15 @@
 #-*- coding: UTF-8 -*-
 
 from request import Request, Response
-import os, sys, builtins
+import os, sys, builtins, shutil
 from config import Configuration
 
 request = Request(os.environ['QUERY_STRING'], sys.stdin.read())
-#request = Request('WF_PAGE=test.py&name=x', 'word=10')
+#request = Request('AELFI_PAGE=test.py&name=x', 'word=10')
 response = Response()
 config = Configuration('../aelfi.conf')
 
-pageloc = '../' + request.args.pop('WF_PAGE')
+pageloc = '../' + request.args.pop('AELFI_PAGE')
 
 error = False
 if '.' not in pageloc.split('/')[-1]:
@@ -30,7 +30,7 @@ if not error and config.isprotected(pageloc):
 
 if not error:
     try:
-        with open(pageloc) as file:
+        with open(pageloc, 'rb') as file:
             request.page = file.read()
             request.pageloc = pageloc
             ext = pageloc.split('.')[-1]
@@ -47,9 +47,10 @@ if ext == 'py':
     except:
         ext, request.page = config.errorresponses.get(500, ('txt', 'Error 500'))
         error = True
-        print(request.page)
-
+        sys.stdout.flush()
+        sys.stdout.buffer.write(request.page)
 else:
     print('Content-Type:', 
           config.extensions.get(ext, 'text/text') + ';' + config.charset + '\n')
-    print(request.page)
+    sys.stdout.flush()
+    sys.stdout.buffer.write(request.page)
