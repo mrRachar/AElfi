@@ -6,7 +6,6 @@ import os, sys, builtins, shutil
 from config import Configuration
 
 request = Request(os.environ['QUERY_STRING'], sys.stdin.read())
-#request = Request('AELFI_PAGE=test.py&name=x', 'word=10')
 response = Response()
 config = Configuration('../aelfi.conf')
 

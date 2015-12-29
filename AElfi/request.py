@@ -3,13 +3,19 @@
 import os, sys
 from collections import OrderedDict as odict
 from http import cookies
+from config import Configuration
+
+config = Configuration('../aelfi.conf')
 
 class Request:
     
     def __init__(self, get: str, post: str, *, page: str='', pageloc: str=''):
+        #GET arguments
         self.args = odict((arg.split('=')[0], arg.split('=')[1])
                   for arg in get.split('&') if len(arg.split("=")) != 1)
+        #GET keywords
         self.keywords = [arg for arg in get.split('&') if '=' not in arg]
+        #POST all
         self.fields = odict((arg.split('=')[0], arg.split('=')[1] if len(arg.split('=')) > 1 else None)
                             for arg in post.split('&'))
         self.header = {
@@ -50,7 +56,7 @@ class Response:
     def __init__(self):
         self.headersent = False
         self.header = {
-            'Content-Type': 'text/html;charset=utf-8',
+            'Content-Type': 'text/html;charset=' + config.charset + ';',
         }
         self.__cookies = cookies.SimpleCookie()
 
@@ -72,7 +78,7 @@ class Response:
     def print(self, *values, sep=' ', end='\n'):
         if not self.headersent:
             self.sendheader()
-        sys.stdout.buffer.write(sep.encode('utf-8').join(value.encode('utf-8') for value in values) + end.encode('utf-8'))
+        sys.stdout.buffer.write(sep.encode(config.charset).join(value.encode(config.charset) for value in values) + end.encode(config.charset))
         sys.stdout.flush()
     
         
