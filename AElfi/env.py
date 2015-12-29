@@ -10,7 +10,7 @@ except AttributeError:
     pass
 print = response.print
 
-exec(builtins.request.page)
+exec(builtins.response.page)
 
 response.sendheader()
 

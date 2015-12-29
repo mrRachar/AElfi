@@ -8,7 +8,7 @@ class Configuration:
         self.errorresponses = {}
         for error, action in config['Error'].items():
             if action.startswith('text:'):
-                self.errorresponses[int(error)] = 'txt', action[5:]
+                self.errorresponses[int(error)] = 'txt', action[5:].encode('utf-8')
             else:
                 with open('../' + action) as response:
                     self.errorresponses[int(error)] = action.split('.')[-1], response.read()
@@ -21,7 +21,7 @@ class Configuration:
         self.charset = config['Charset']
     def isprotected(self, file):
         for regex in self.protected:
-            if re.match(regex, file[1:]):
+            if re.match(regex, file[3:]):
                 return True
         else:
             return False

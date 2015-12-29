@@ -4,12 +4,13 @@ import os, sys
 from collections import OrderedDict as odict
 from http import cookies
 from config import Configuration
+from agent import Agent
 
 config = Configuration('../aelfi.conf')
 
 class Request:
     
-    def __init__(self, get: str, post: str, *, page: str='', pageloc: str=''):
+    def __init__(self, get: str, post: str, *, pageloc: str=''):
         #GET arguments
         self.args = odict((arg.split('=')[0], arg.split('=')[1])
                   for arg in get.split('&') if len(arg.split("=")) != 1)
@@ -26,11 +27,11 @@ class Request:
             'connection type': os.environ['HTTP_CONNECTION'],
             'method': os.environ['REQUEST_METHOD'],
             'accepted language': os.environ['HTTP_ACCEPT_LANGUAGE'],
-        }   
+        }
+        self.agent = Agent(self.header['user agent'])
         self.__cookies = cookies.SimpleCookie()
         if 'HTTP_COOKIE' in os.environ:
             self.__cookies.load(os.environ['HTTP_COOKIE'])
-        self.page = page
         self.pageloc = pageloc
         
     @property
@@ -53,12 +54,13 @@ class Request:
 
 
 class Response:
-    def __init__(self):
+    def __init__(self, page: str=''):
         self.headersent = False
         self.header = {
             'Content-Type': 'text/html;charset=' + config.charset + ';',
         }
         self.__cookies = cookies.SimpleCookie()
+        self.page = page
 
     def sendheader(self):
         if self.headersent:
