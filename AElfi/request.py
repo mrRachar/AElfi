@@ -33,6 +33,7 @@ class Request:
         if 'HTTP_COOKIE' in os.environ:
             self.__cookies.load(os.environ['HTTP_COOKIE'])
         self.pageloc = pageloc
+        self.location = ''
         
     @property
     def get(self) -> dict:

@@ -13,6 +13,7 @@ class Configuration:
                 with open('../' + action) as response:
                     self.errorresponses[int(error)] = action.split('.')[-1], response.read()
         self.extensions = {}
+        self.defaultmime = config['Entensions'].pop('default').pop('content-type')
         for name, extension in config['Extensions'].items():
             for ext in extension['extensions']:
                 self.extensions[ext] = extension['content-type']

@@ -49,7 +49,7 @@ class Agent:
             if 'iPad' in core:
                 digest['device'] = 'iPad'
                 digest['os']['name'] = 'iOS'
-                digest['type'] = 'mobile'
+                digest['type'] = 'tablet'
                 digest['touch'] = True
             elif 'iPhone' in core:
                 digest['device'] = 'iPhone'
@@ -68,14 +68,15 @@ class Agent:
                                             .group(1).replace('_', '.')
         elif 'Android' in core:
             digest['os']['name'] = 'Android'
-            digest['type'] = 'mobile' if 'mobile' in branch else 'tablet'
-            digest['device'] = 'LG' if 'LG' in core else            \
-                               'HTC' if 'HTC' in core else          \
-                               'Motorola' if 'Moto' in core else    \
-                               'Nexus' if 'Nexus' in core else      \
-                               'Samsung' if 'SAMSUNG' in core else  \
+            digest['type'] = 'mobile' if ' mobile ' in branch.lower() else 'tablet'
+            digest['device'] = 'LG' if 'LG' in core.upper() else            \
+                               'HTC' if 'HTC' in core.upper() else          \
+                               'Motorola' if 'Moto' in core.lower() else    \
+                               'Motorola' if 'XT' in core.upper() else      \
+                               'Nexus' if 'nexus' in core.lower() else      \
+                               'Samsung' if 'samsung' in core.upper() else  \
                                'Smartphone'
-            digest['os']['version'] = re.search(r'(\d+\.\d+\.\d+)', core).group(1)
+            digest['os']['version'] = re.search(r'(\d+\.\d+(?:\.\d+)?)', core).group(1)
             digest['touch'] = True
 
         elif 'Windows Phone' in core:

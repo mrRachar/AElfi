@@ -9,6 +9,7 @@ request = Request(os.environ['QUERY_STRING'], sys.stdin.read())
 response = Response()
 config = Configuration('../aelfi.conf')
 
+request.location = request.args['AELFI_PAGE']
 pageloc = '../' + request.args.pop('AELFI_PAGE')
 
 error = False
@@ -50,6 +51,6 @@ if ext == 'py':
         sys.stdout.buffer.write(response.page)
 else:
     print('Content-Type:', 
-          config.extensions.get(ext, 'text/text') + ';' + config.charset + '\n')
+          config.extensions.get(ext, config.defaultmime) + ';' + config.charset + '\n')
     sys.stdout.flush()
     sys.stdout.buffer.write(response.page)
