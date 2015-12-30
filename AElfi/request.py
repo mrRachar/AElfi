@@ -18,7 +18,7 @@ class Request:
         self.keywords = [arg for arg in get.split('&') if '=' not in arg]
         #POST all
         self.fields = odict((arg.split('=')[0], arg.split('=')[1] if len(arg.split('=')) > 1 else None)
-                            for arg in post.split('&'))
+                            for arg in post.split('&') if arg.split('=')[0] != '')
         self.header = {
             'user agent': os.environ['HTTP_USER_AGENT'],
             'ip': os.environ['REMOTE_ADDR'],
@@ -81,7 +81,8 @@ class Response:
     def print(self, *values, sep=' ', end='\n'):
         if not self.headersent:
             self.sendheader()
-        sys.stdout.buffer.write(sep.encode(config.charset).join(value.encode(config.charset) for value in values) + end.encode(config.charset))
+        sys.stdout.buffer.write(str(sep).encode(config.charset).join(str(value).encode(config.charset) for value in values)
+                                + str(end).encode(config.charset))
         sys.stdout.flush()
     
         

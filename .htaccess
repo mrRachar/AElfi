@@ -1,3 +1,8 @@
+Require all granted
+Options +ExecCGI
+AddHandler cgi-script .py .pl
+DirectoryIndex index.py index.php index.html index.htm index.xml index.txt index.jpg index.png index.gif index.jpeg index.pl
+
 RewriteEngine on
 
 #vv Custom Paths vv#
@@ -15,7 +20,7 @@ RewriteRule ^(.*)$ "AElfi/__init__.py?AELFI_PAGE=$1" [L,QSA]
 RewriteCond %{REQUEST_FILENAME} /aelfi.conf$
 RewriteRule ^.*$ "" [F]
 
-RewriteCond %{REQUEST_FILENAME} .conf$
+RewriteCond %{REQUEST_FILENAME} .template$
 RewriteRule ^.*$ "" [F]
 
 Options -Indexes
