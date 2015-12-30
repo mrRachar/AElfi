@@ -16,17 +16,11 @@ error = False
 if '.' not in pageloc.split('/')[-1]:
     if pageloc[-1] != '/':
         pageloc += '/'
-    for index in config.indecies:
-        if os.path.isfile(pageloc + index):
-            pageloc += index
-            break
+    if os.path.isfile(pageloc + 'index.py'):
+        pageloc += 'index.py'
     else:
         ext, response.page = config.errorresponses.get(404, ('txt', 'Error 404'))
-        error = True
-
-if not error and config.isprotected(pageloc):
-    ext, response.page = config.errorresponses.get(403, ('txt', 'Error 403'))
-    error = True
+        error = 404
 
 if not error:
     try:
@@ -37,20 +31,19 @@ if not error:
             
     except IOError:
         ext, response.page = config.errorresponses.get(404, ('txt', 'Error 404'))
-        error = True
+        error = 404
 
-# Why IO Error above
-if ext == 'py':
-    builtins.request, builtins.response = request, response
-    try:
-        import env
-    except:     #i.e. Internal Server Error
-        ext, response.page = config.errorresponses.get(500, ('txt', 'Error 500'))
-        error = True
-        sys.stdout.flush()
-        sys.stdout.buffer.write(response.page)
-else:
-    print('Content-Type:', 
-          config.extensions.get(ext, config.defaultmime) + '\n')
-    sys.stdout.flush()
-    sys.stdout.buffer.write(response.page)
+if error:
+    response.header['Status'] = str(error)
+    if ext != 'py':
+        request.sendheader()
+        print(response.page)
+
+builtins.request, builtins.response = request, response
+try:
+    import env
+except BaseException as e:     #i.e. Internal Server Error
+    ext, response.page = config.errorresponses.get(500, ('txt', 'Error 500</br>' + str(e)))
+    error = 500
+    print()
+    print(response.page)

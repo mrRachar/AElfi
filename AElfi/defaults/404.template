@@ -1,9 +1,0 @@
-<html>
-    <head>
-        <title>${title}</title>
-    </head>
-    <body>
-        <h2>${header}</h2>
-        <p>${message | h}</p>
-    </body>
-</html>

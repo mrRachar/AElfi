@@ -1,4 +1,21 @@
 RewriteEngine on
-RewriteCond %{REQUEST_FILENAME} !^AElfi/.*
 
+#vv Custom Paths vv#
+
+
+#^^ Custom Paths ^^#
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ "AElfi/__init__.py?AELFI_PAGE=AElfi/defaults/404.py&page=$1"
+
+RewriteCond %{REQUEST_FILENAME} .py$
 RewriteRule ^(.*)$ "AElfi/__init__.py?AELFI_PAGE=$1" [L,QSA]
+
+RewriteCond %{REQUEST_FILENAME} /aelfi.conf$
+RewriteRule ^.*$ "" [F]
+
+RewriteCond %{REQUEST_FILENAME} .conf$
+RewriteRule ^.*$ "" [F]
+
+Options -Indexes
