@@ -51,6 +51,6 @@ if ext == 'py':
         sys.stdout.buffer.write(response.page)
 else:
     print('Content-Type:', 
-          config.extensions.get(ext, config.defaultmime) + ';' + config.charset + '\n')
+          config.extensions.get(ext, config.defaultmime) + '\n')
     sys.stdout.flush()
     sys.stdout.buffer.write(response.page)
