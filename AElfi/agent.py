@@ -1,24 +1,62 @@
 import re
+from typing import Optional
 
 class Agent:
-    def __init__(self, useragent=None, **kwargs):
+    """A representation of the user's browser, agent, device, etc."""
+    os = {
+        'name': 'OS',
+        'version': '0'
+    }
+    istouch = False
+    type = 'desktop'
+    system = '32'
+    device = 'computer'
+    browser = {
+        'name': 'browser',
+        'version': '0',
+        'engine': {
+            'name': 'engine',
+            'version': '0'
+        }
+    }
+
+    def __init__(self, useragent: Optional[str]=None, **kwargs):
+        """Create a new user agent, either giving a string to pass, or keywords for values, or both
+
+        :param useragent:Optional[str] - the user agent string, to digest
+        :param kwargs -
+            os: dict - The agent's operating system, a dict of 'name', and 'version'
+            touch: str - is the device a touch screen
+            type: str - Is the agent a desktop, mobile or tablet
+            device: str - Brand or manufacturer of device: Mac, HTC, LG or any other
+            browser: dict - The agent's browser system, a dict of 'name', and 'version', and a sub-dict under 'engine' containing the same
+        """
+
+        # If a user agent string has been given
         if useragent:
-            breakdown = self.digest(useragent)
+            breakdown = self.digest(useragent) #Break it down into a dictionary
+            #Assign the breakdown to the fields
             self.os = breakdown['os']
             self.istouch = breakdown['touch']
             self.type = breakdown['type']
             self.system = breakdown['system']
             self.device = breakdown['device']
             self.browser = breakdown['browser']
-        else:
-            self.os = kwargs.get('os', '')
-            self.istouch = kwargs.get('touch', False)
-            self.type = kwargs.get('type', '')
-            self.system = kwargs.get('system', '')
-            self.device = kwargs.get('device', '')
-            self.browser = kwargs.get('browser', '')
+
+        #If any of these have been given as kwargs, use them instead of current value, or digested value
+        self.os = kwargs.get('os', self.os)
+        self.istouch = kwargs.get('touch', self.istouch)
+        self.type = kwargs.get('type', self.type)
+        self.system = kwargs.get('system', self.system)
+        self.device = kwargs.get('device', self.device)
+        self.browser = kwargs.get('browser', self.browser)
 
     def __repr__(self) -> str:
+        """Display a representation of the object, which can be used to instantiate a similar object
+
+        :return the description of the object, giving complete state, in constructor form
+        """
+
         return '{}(os={!r}, system={!r}, type={!r}, device={!r}, touch={!r}, browser={!r})'.format(
             self.__class__.__name__,
             self.os,
@@ -29,7 +67,11 @@ class Agent:
             self.browser
         )
 
+    @classmethod
     def digest(self, string):
+        """Works out the meaning of a given string, returning the digest as a parsed dictionary"""
+
+        # Set some default values for the digest
         digest = {
             'device': '',
             'os': {'name': '', 'version': ''},
@@ -37,15 +79,17 @@ class Agent:
             'system': '32/64',
             'type': 'desktop'
         }
+        # See if it could be a user agent
         if not re.match(r'[A-Za-z]+/\d*.\d*\s*\(.*?\)(?:\s*.*)?', string):
-            return None
+            return None # If it couldn't, return no digest
+
         digest['base'] = {}
         digest['base']['name'], digest['base']['version'], core, branch = \
             re.match(r'([A-Za-z]+)/(\d*.\d*)\s*\((.*?)\)(?:\s*(.*))?', string).groups()
 
         ## Main device checking ##
         
-        if self.check(any, core, 'iPad', 'iPhone', 'Macintosh'):
+        if self.any_in(core, 'iPad', 'iPhone', 'Macintosh'):
             if 'iPad' in core:
                 digest['device'] = 'iPad'
                 digest['os']['name'] = 'iOS'
@@ -100,8 +144,8 @@ class Agent:
                                     '10' if 'NT 10' in core else        \
                                     'NT' if 'NT' in core else ''
             digest['touch'] = False if 'touch' not in core else True
-            digest['system'] = '64' if self.check(any, core, 'WOW64', 'Win64') \
-                                    else '32'
+            digest['system'] = '64' if self.any_in(core, 'WOW64', 'Win64') \
+                else '32'
 
         
         elif 'Linux' in core:
@@ -162,5 +206,6 @@ class Agent:
 
         return digest
 
-    def check(self, f, string, *list_):
-        return f(word in string for word in list_)
+    @staticmethod
+    def any_in(iterable, *list_):
+        return any(word in iterable for word in list_)

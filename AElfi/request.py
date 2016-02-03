@@ -3,8 +3,8 @@
 import os, sys
 from collections import OrderedDict as odict
 from http import cookies
-from config import Configuration
-from agent import Agent
+from .config import Configuration
+from .agent import Agent
 
 config = Configuration('../aelfi.conf')
 

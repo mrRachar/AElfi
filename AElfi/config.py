@@ -1,14 +1,21 @@
-import yaml, re
+import yaml
 
 class Configuration:
-    def __init__(self, file_location: str):
+    """The configurations that the user has chosen for AElfi in general"""
+
+    charset = 'utf-8'
+
+    def __init__(self, file_location: str, *, page=0):
+        """Create a new structure to store confifurations, from a YAML file
+
+        :param file_location: str - Where the yaml file is located
+        :param page: int - If there are multiple documents in the file, which one to load
+        """
+
+        # Open the file to read
         with open(file_location) as file:
-            config = yaml.load(file)
-        self.errorresponses = {}
-        for error, action in config['Error'].items():
-            if action.startswith('text:'):
-                self.errorresponses[int(error)] = 'txt', action[5:].encode('utf-8')
-            else:
-                with open('../' + action) as response:
-                    self.errorresponses[int(error)] = action.split('.')[-1], response.read()
+            # Get the requested page of the YAML file
+            config = tuple(yaml.safe_load_all(file))[page]
+
+        # Store what charset to send documents as being by default
         self.charset = config['Charset']

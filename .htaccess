@@ -1,26 +1,20 @@
 Require all granted
-Options +ExecCGI
+Options +ExecCGI -Indexes
 AddHandler cgi-script .py .pl
 DirectoryIndex index.py index.php index.html index.htm index.xml index.txt index.jpg index.png index.gif index.jpeg index.pl
-
 RewriteEngine on
+ErrorDocument 403 "Let's just pretend that file doesn't exist [403 Forbidden]"
+ErrorDocument 404 "C:\Users\Mattross\Documents\My Programming\Python Projects\AElfi\AElfi\defaults\404.py"
+ErrorDocument 500 "Problem whilst processing, oops [500 Server Error]"
 
-#vv Custom Paths vv#
+#Python Documents Redirect
+RewriteCond %{REQUEST_FILENAME} .py
+RewriteRule "^(.*)$" "C:\Users\Mattross\Documents\My Programming\Python Projects\AElfi\AElfi\loader.py?AELFI_PAGE=$1" [L,QSA]
 
-
-#^^ Custom Paths ^^#
-
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^(.*)$ "AElfi/defaults/404.py?sourcepage=$1"
-
-RewriteCond %{REQUEST_FILENAME} .py$
-RewriteRule ^(.*)$ "AElfi/__init__.py?AELFI_PAGE=$1" [L,QSA]
-
-RewriteCond %{REQUEST_FILENAME} /aelfi.conf$
-RewriteRule ^.*$ "" [F]
-
+#Template File Protection
 RewriteCond %{REQUEST_FILENAME} .template$
-RewriteRule ^.*$ "" [F]
+RewriteRule "^.*$" "" [F]
 
-Options -Indexes
+#Aelfi Config File Protection
+RewriteCond %{REQUEST_FILENAME} ^/aelfi.config$
+RewriteRule "^.*$" "" [F]
