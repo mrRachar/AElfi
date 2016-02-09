@@ -1,5 +1,4 @@
 import re
-from typing import Optional
 
 class Agent:
     """A representation of the user's browser, agent, device, etc."""
@@ -20,7 +19,7 @@ class Agent:
         }
     }
 
-    def __init__(self, useragent: Optional[str]=None, **kwargs):
+    def __init__(self, useragent: str=None, **kwargs):
         """Create a new user agent, either giving a string to pass, or keywords for values, or both
 
         :param useragent:Optional[str] - the user agent string, to digest

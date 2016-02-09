@@ -5,7 +5,7 @@
 # TODO allow for a little more control over .htaccess file in .conf
 # TODO MAJOR --RECLEAN!!
 
-from .request import Request, Response
+from request import Request, Response
 import os, sys, builtins
 
 # Create the main page loading variables
