@@ -2,13 +2,11 @@
 A simple wrapper framework for Python 3 projects on Apache2
 
 ## How to Setup
-Download a release, unzip it, and make it the directory of your webapp/project. Then, write your app therein.
+1. Download the latest release, and save it as the folder you want to build your web-app in. You will also need `mod_rewrite`
+2. Edit `aelfi.conf` to your liking. You can change this later. When your finished, run `AElfi/build.py` from the project folder. This will generate the appropriate .htaccess file
+3. Start writing you Python files! They should work with no extra work :smiley:!
 
-## How to use
-Inside a project folder, you can write python files like normal, you don't even need '#usr/bin/env python3' at the start. Most importantly, you don't 
-have to deal with the server backend, no more os.environ to find out request headers and the like. Just use the `request` and `response` objects, 
-which are built into the environment. All output is automatically encoded in the encoding of your choice, `utf-8` by default, so you don't have to do 
-this manually every time you type a non-ASCII symbol
+Simple as 1, 2, 3!
 
 ### Request
 Request contains what the user has sent you, so `.header` is a dictionary of all the user headers, and `.cookies` are the cookies. Print anything out for more info about it. 
