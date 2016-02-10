@@ -57,7 +57,7 @@ class HTAccessDocument:
         return representation
 
     @staticmethod
-    def reltoabs_path(path: str, location: str='../') -> str:
+    def reltoabs_path(path: str, location: str='./') -> str:
         if path == '':
             return ''
         if path.startswith('text:'):
@@ -69,8 +69,11 @@ class HTAccessDocument:
         return absolute_path
 
 if __name__ == '__main__':
-    with open('../.htaccess', 'w') as htaccess_file:
-        htaccess = HTAccessDocument.fromyaml(open('../aelfi.conf'), page=1)
+    if os.getcwd().endswith('AElfi'):
+        print('Please make sure to run this tool from the projects root directory, not the `AELfi` folder!\nRunning Anyway...\n')
+    
+    with open('./.htaccess', 'w') as htaccess_file:
+        htaccess = HTAccessDocument.fromyaml(open('./aelfi.conf'), page=1)
         htaccess.rewrites.insert(0, ('Python Documents Redirect', ['.py'], "^(.*)$", "AElfi/loader.py?AELFI_PAGE=$1", "L,QSA"))
         htaccess.rewrites.insert(1, ('Aelfi Config File Protection', ['^/aelfi.conf$'], "^.*$", "", "F"))
         htaccess.rewrites.insert(1, ('Template File Protection', ['.template$'], "^.*$", "", "F"))
@@ -81,3 +84,4 @@ if __name__ == '__main__':
                             "index.xml", "index.txt", "index.jpg", "index.png",
                             "index.gif", "index.jpeg", "index.pl"]
         htaccess_file.write(str(htaccess))
+        print('built!')
