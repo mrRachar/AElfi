@@ -22,7 +22,7 @@ sudo service apache2 restart
  ```
 
 1. Download the latest release, and save it as the folder you want to build your web-app in.
-2. Edit `aelfi.conf` to your liking. You can change this later. When your finished, run `AElfi/build.py` from the project folder. This will generate the appropriate .htaccess file
+2. Edit `aelfi.conf` to your liking. You can change this later. When your finished, run `AElfi/build.py` from the project folder (on Windows, you need to run `python3 ...`). This will generate the appropriate .htaccess file
 3. Start writing you Python files! They should work with no extra work :smiley:!
 
 Simple as 1, 2, 3!
