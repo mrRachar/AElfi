@@ -14,7 +14,7 @@ Instead of messing around with complicated frameworks, AElfi does all the hard w
 ##### Requirements
 
 - The Mako template engine: `pip3 install mako`
-- `AllowOveride` to be on for the AElfi folder
+- `AllowOveride` to be on for the entire project folder
 - That `mod_rewrite` is enabled:  
 ```bash
 a2enmod rewrite
