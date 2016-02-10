@@ -11,7 +11,7 @@ Instead of messing around with complicated frameworks, AElfi does all the hard w
  4. Mako template support. Save any mako file to `.template` with the same name as a `.py` file, and it will automatically run it for you.
 
 ## How to Setup
-#### Requirements
+##### Requirements
 
 - The Mako template engine: `pip3 install mako`
 - `AllowOveride` to be on for the AElfi folder
@@ -20,7 +20,7 @@ Instead of messing around with complicated frameworks, AElfi does all the hard w
 a2enmod rewrite
 sudo service apache2 restart
  ```
-
+#### Instructions
 1. Download the latest release, and save it as the folder you want to build your web-app in.
 2. Edit `aelfi.conf` to your liking. You can change this later. When your finished, run `AElfi/build.py` from the project folder (on Windows, you need to run `python3 ...`). This will generate the appropriate .htaccess file
 3. Start writing you Python files! They should work with no extra work :smiley:!
