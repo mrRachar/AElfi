@@ -72,7 +72,7 @@ if __name__ == '__main__':
     with open('../.htaccess', 'w') as htaccess_file:
         htaccess = HTAccessDocument.fromyaml(open('../aelfi.conf'), page=1)
         htaccess.rewrites.insert(0, ('Python Documents Redirect', ['.py'], "^(.*)$", "AElfi/loader.py?AELFI_PAGE=$1", "L,QSA"))
-        htaccess.rewrites.insert(1, ('Aelfi Config File Protection', ['^/aelfi.config$'], "^.*$", "", "F"))
+        htaccess.rewrites.insert(1, ('Aelfi Config File Protection', ['^/aelfi.conf$'], "^.*$", "", "F"))
         htaccess.rewrites.insert(1, ('Template File Protection', ['.template$'], "^.*$", "", "F"))
         htaccess.require = 'all granted'
         htaccess.options = '+ExecCGI -Indexes'
