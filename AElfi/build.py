@@ -25,8 +25,8 @@ class HTAccessDocument:
             htaccess.error_documents = document['Errors']
         if document.get('Protect'):
             htaccess.rewrites = [
-                ('Protect "{}"'.format(directory), [re.escape(cls.cleanpath('../', toabsolute=True) + '/' + directory) + '.*\.py$'], '.*', '', 'END,'
-                                                                                                                                    'H=text/plain')
+                ('Protect "{}"'.format(directory), ['^'+re.escape(cls.cleanpath('./', toabsolute=True)+'/'+directory) + '.*\.py$'], '(.*)', '$1',
+                 'END,H=text/plain')
                 for directory in document['Protect']
                 ]
         if document.get('Paths'):
@@ -88,7 +88,7 @@ if __name__ == '__main__':
         htaccess = HTAccessDocument.fromyaml(open('./aelfi.conf'), page=1)
         htaccess.rewrites.append(('Python Documents Redirect', ['.py$'], "^(.*)$", "AElfi/loader.py?AELFI_PAGE=$1", "L,QSA"))
         htaccess.rewrites.insert(0,
-                    ('Aelfi Config File Protection', ['^'+re.escape(htaccess.cleanpath('../', toabsolute=True)) + '/aelfi\.conf$'], "^.*$", "", "F"))
+                    ('Aelfi Config File Protection', ['^'+re.escape(htaccess.cleanpath('./', toabsolute=True)) + '/aelfi\.conf$'], "^.*$", "", "F"))
         htaccess.rewrites.insert(0, ('Template File Protection', ['\.template$'], "^.*$", "", "F"))
         htaccess.require = 'all granted'
         htaccess.options = '+ExecCGI -Indexes'
