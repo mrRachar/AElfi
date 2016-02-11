@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 #-*- coding: UTF-8 -*-
 
-import yaml, os
+import yaml, os, re
 
 class HTAccessDocument:
     error_documents = {}
@@ -28,6 +28,13 @@ class HTAccessDocument:
                     (name, redirect['when'], redirect['from'], redirect['to'], redirect.get('options', ''))
                     for name, redirect in document['Paths'].items()
                 ]
+        if document.get('Index'):
+            htaccess.indices = list(document['Index'])
+        if document.get('Protect'):
+            htaccess.rewrites += [
+                ('Protect "{}"'.format(directory), ['^\/' + re.escape(directory) + '.*\.py$'], '.*', '', 'F')
+                for directory in document['Protect']
+                ]
         return htaccess
 
     def __str__(self):
@@ -48,23 +55,24 @@ class HTAccessDocument:
         representation += 'RewriteEngine {}\n'.format('on' if self.rewrite_engine else 'off')
 
         for error, document in sorted(self.error_documents.items()):
-            representation += 'ErrorDocument {number} "{file}"\n'.format(number=error, file=self.reltoabs_path(document))
+            representation += 'ErrorDocument {number} "{file}"\n'.format(number=error, file=self.cleanpath(document, toabsolute=True))
         for name, rules, collect, destination, options in self.rewrites:
             representation += '\n#{}\n'.format(name)
             for rule in (rules if isinstance(rules, list) else (rules,)):
                 representation += 'RewriteCond %{{REQUEST_FILENAME}} {when}\n'.format(when=rule)
             representation += 'RewriteRule "{collect}" "{destination}"{options}\n'.format(rule=rule, collect=collect,
-                                                                                          destination=self.reltoabs_path(destination),
+                                                                                          destination=self.cleanpath(destination),
                                                                                           options = ' [' + options + ']'
                 if options else '')
         return representation
 
     @staticmethod
-    def reltoabs_path(path: str, location: str='./') -> str:
-        if path == '':
-            return ''
+    def cleanpath(path: str, location: str='./', toabsolute: bool=False) -> str:
         if path.startswith('text:'):
             return path[5:]
+        elif not toabsolute or path == '':
+            return path
+
         actual_dir = os.getcwd()
         os.chdir(location)
         absolute_path = os.path.abspath(path)
@@ -78,13 +86,14 @@ if __name__ == '__main__':
     with open('./.htaccess', 'w') as htaccess_file:
         htaccess = HTAccessDocument.fromyaml(open('./aelfi.conf'), page=1)
         htaccess.rewrites.insert(0, ('Python Documents Redirect', ['.py$'], "^(.*)$", "AElfi/loader.py?AELFI_PAGE=$1", "L,QSA"))
-        htaccess.rewrites.insert(1, ('Aelfi Config File Protection', ['^/aelfi.conf$'], "^.*$", "", "F"))
-        htaccess.rewrites.insert(1, ('Template File Protection', ['.template$'], "^.*$", "", "F"))
+        htaccess.rewrites.insert(1, ('Aelfi Config File Protection', ['^/aelfi\.conf$'], "^.*$", "", "F"))
+        htaccess.rewrites.insert(1, ('Template File Protection', ['\.template$'], "^.*$", "", "F"))
         htaccess.require = 'all granted'
         htaccess.options = '+ExecCGI -Indexes'
         htaccess.handlers = ['cgi-script .py .pl']
-        htaccess.indices = ["index.py", "index.php", "index.html", "index.htm",
-                            "index.xml", "index.txt", "index.jpg", "index.png",
-                            "index.gif", "index.jpeg", "index.pl"]
+        if not htaccess.indices:
+            htaccess.indices = ["index.py", "index.php", "index.html", "index.htm",
+                                "index.xml", "index.txt", "index.jpg", "index.png",
+                                "index.gif", "index.jpeg", "index.pl"]
         htaccess_file.write(str(htaccess))
         print('built!')
