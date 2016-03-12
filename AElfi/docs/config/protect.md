@@ -8,7 +8,7 @@ Protect:
 ```
 *A quick example of a protect directive*
 
-***Note: *** *When paths are relative, they are relative to the root of the web app*
+***Note:*** *When paths are relative, they are relative to the root of the web app*
 
 It is best to end the directory with a slash, otherwise AElfi might protect `/useruploads_safe/`, if you only specify `/useruploads`. Adding the slash means only this directory is protected.
 
