@@ -30,7 +30,7 @@ Charset: 'utf-8'           # Any Python recognised one should do the trick
 
 ...						   # We've finished controlling how AElfi runs
 
-# Build Configuration	   # Let's turn to descriping our app's behaviour
+# Build Configuration	   # Let's turn to describing our app's behaviour
 ---
 
 Errors:					   # What to do in these cases
@@ -42,7 +42,7 @@ Errors:					   # What to do in these cases
     418: "/var/www/teapot/stopthinkingyouregettingcoffee.png"
 
 Protect:					# Let's protect somewhere
-    - myproject/resources   # This directory the user might upload to
+    - myproject/resources/  # This directory the user might upload to
 
 Paths:                      # Now we need to reroute our user to a different file
     CGI-directory:          # Any name will do, it just clarifies it a bit
