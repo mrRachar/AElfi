@@ -54,6 +54,9 @@ class Request:
     def directory(self) -> str:
         return '/'.join(self.pageloc.split('/')[:-1]) + '/'
 
+    def __getitem__(self, headerkey: str):
+        return self.header[headerkey]
+
 
 class Response:
     def __init__(self, page: str=''):
