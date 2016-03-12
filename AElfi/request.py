@@ -27,6 +27,7 @@ class Request:
             'connection type': os.environ['HTTP_CONNECTION'],
             'method': os.environ['REQUEST_METHOD'],
             'accepted language': os.environ['HTTP_ACCEPT_LANGUAGE'],
+            'location': os.environ['REQUEST_URI'],
         }
         self.agent = Agent(self.header['user agent'])
         self.__cookies = cookies.SimpleCookie()
