@@ -26,7 +26,7 @@ These are all the POST variables that the client has sent you, if they have sent
 These are any get variables you have been sent, either in [`keywords`](#keywords) or in [`args`](#args). They are in a OrderedDict, args first, and keywords have the value `None`.
 
 For the request "index.py?name=hello&settings&page=4&advanced", get would be `OrderedDict({'name': 'hello', 'page': '4', 'settings':None, 'advanced': None})`.
-#### `headers`
+#### `header`
 These are all the headers the user has sent you in a dictionary. They can also be accessed straight from the `request` object.
 * 'user agent', the user-agent string of the client
 - 'ip', the IP address of the client
