@@ -31,8 +31,8 @@ Download the latest release, and save it as the folder you want to build your we
 
    *or*
 ```bash
-wget https://github.com/mrRachar/AElfi/archive/v0.2.1.zip
-unzip -d "YourWebAppFolderName" v0.2.1.zip
+wget https://github.com/mrRachar/AElfi/archive/v0.2.1-r1.zip
+unzip -d "YourWebAppFolderName" v0.2.1-r1.zip
 ```
 
 ##### Get Going
