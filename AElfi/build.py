@@ -21,6 +21,11 @@ class HTAccessDocument:
             pass
 
         htaccess = cls()
+
+        # In the case that there are no directives
+        if document is None:
+            return htaccess
+
         if document.get('Errors'):
             htaccess.error_documents = document['Errors']
         if document.get('Protect'):
