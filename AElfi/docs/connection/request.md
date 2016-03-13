@@ -1,10 +1,10 @@
 ## Request Object
 The request object, `request`, allows you access to all the information the user has sent you. It is, like all [COM](start.md) objects, automatically available for you in the global scope.
 
-Anything in headers can also be accessed by subscripting the request object, so `request.headers['ip']` and `request['ip']` are the same.
+Anything in `header` can also be accessed by subscripting the request object, so `request.header['ip']` and `request['ip']` are the same.
 
 #### `agent`
-The user agent, the string version stored in `.headers['user agent']`, is parsed to get all the information, from browser to operating system and device type, so you can make best guesses on who your user is.
+The user agent, the string version stored in `.header['user agent']`, is parsed to get all the information, from browser to operating system and device type, so you can make best guesses on who your user is.
 
 *[Find more about `UserAgent` and user agent parsing](agent.md)*
 
