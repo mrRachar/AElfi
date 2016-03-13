@@ -1,7 +1,7 @@
 # AElfi
 A simple wrapper framework for Python 3 projects on Apache2
 
-[Documentation](AElfi/docs/main.md)
+*[Documentation](AElfi/docs/main.md)*
 
 Instead of messing around with complicated frameworks, AElfi does all the hard work for you, without making the project too heavy. Just put the AElfi files in your folder, customise the config file if you want to, and run `AElfi/build.py`, and you're set to go! Plus, with integrated `mako` template support, you don't have to worry about messy view scripts.
 
@@ -31,8 +31,8 @@ Download the latest release, and save it as the folder you want to build your we
 
    *or*
 ```bash
-wget https://github.com/mrRachar/AElfi/archive/v0.2.0r1.zip
-unzip -d "YourWebAppFolderName" v0.2.0r1.zip
+wget https://github.com/mrRachar/AElfi/archive/v0.2.1.zip
+unzip -d "YourWebAppFolderName" v0.2.1.zip
 ```
 
 ##### Get Going
