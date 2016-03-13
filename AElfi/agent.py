@@ -72,7 +72,7 @@ class Agent:
 
         # Set some default values for the digest
         digest = {
-            'device': '',
+            'device': 'Computer',
             'os': {'name': '', 'version': ''},
             'touch': False,
             'system': '32/64',
