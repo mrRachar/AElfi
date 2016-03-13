@@ -1,11 +1,7 @@
 # AElfi Documentation 
-***Version v0.2.0-A***
+***Version v0.2.0r1***
 
 These documents should explain the key concepts in AElfi. Whilst they may miss a few small areas, they should contain enough to get started properly, and use AElfi to its full potential
-
-### Guides
-Its probably best to start with one of these, just to get the hang of things
-- [Getting Started with AElfi](gettingstarted/start.md)
 
 ### Reference
 This contains the information of the different aspects of AElfi
