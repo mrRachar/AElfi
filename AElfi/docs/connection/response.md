@@ -10,7 +10,7 @@ Cookies is a `http.cookies.SimpleCookies` object. These cookies will be sent bac
 set to 'text/html;charset=*aelfi.conf charset value*'. You can add your own headers, but you are probably going to want to use the [offical headers](https://en.wikipedia.org/wiki/List_of_HTTP_header_fields#Response_fields).
 
 #### `headersent` 
-This variable will be `False`, until the headers have been sent, either by [print](#print)ing or by calling (`sendheaders`)[#sendheaders].
+This variable will be `False`, until the headers have been sent, either by [print](#print)ing or by calling [`sendheaders`](#sendheaders).
 
 #### `print`
 `response.print` is where AElfi's special print fuction is defined. It is the same as calling `print` in the global scope. It will automatically send 
