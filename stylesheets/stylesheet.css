@@ -57,6 +57,7 @@ a {
   color: #FFA500;
   text-align: center;
   background-color: #0C1021;
+  opacity: 0.6;
   /*background-image: linear-gradient(120deg, #155799, #159957); }*/
   background-image: url(http://campars.net/general-resources/aelfi-config.png); 
   background-repeat: no-repeat;
