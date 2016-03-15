@@ -8,7 +8,7 @@ This contains the information of the different aspects of AElfi
 
 1. [The Configuration File](config/start.md) - *aelfi.conf*
   1. [Service Configuration and Charset](config/charset.md)
-  2. [Paths](config/paths.md) - redirecting users
+  2. [Paths](config/path.md) - redirecting users
   3. [Protect](config/protect.md) - no execution zones
   4. [Errors](config/errors.md) - making sure you look nice when all goes wrong
   5. [Indices](config/indices.md) - *Index*, where's home?
