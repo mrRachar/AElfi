@@ -101,10 +101,17 @@ class HTAccessDocument:
             htaccess.rewrites += [
                     Rewrite(
                         name,
-                        [('%{REQUEST_FILENAME}', when) for when in redirect['when']] if isinstance(redirect['when'], list) else [('%{REQUEST_FILENAME}', redirect['when'])],
+                        ([('%{REQUEST_FILENAME}', when) for when in redirect['when']]
+                                if isinstance(redirect['when'], list)
+                                else [('%{REQUEST_FILENAME}', redirect['when'])])
+                            if 'when' in redirect else [],
                         redirect['from'],
                         redirect['to'],
-                        redirect.get('options', []) if isinstance(redirect.get('options', []), list) else [redirect.get('options')]
+                        list(
+                            set(redirect.get('options', [])) | {'L'}
+                            if isinstance(redirect.get('options', []), list)
+                            else {redirect.get('options'), 'L'}
+                        )
                     ) for name, redirect in document['Paths'].items()
                 ]
         if document.get('Index'):

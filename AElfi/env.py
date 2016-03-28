@@ -1,6 +1,5 @@
 import builtins                     # The builtins, including request and response objects
 import os                           # To change working director
-from mako import template           # For auto-templating
 from config import Configuration    # For the encoding to open the file with
 
 config = Configuration('../aelfi.conf') # Load in the configurations

@@ -13,13 +13,13 @@ Paths:
 ```
 *A quick example of a path directive. This example is referenced throughout explanations; some regex knowledge required*
 
-***Note:*** *The paths to match against are relative to the root of your server*
+***Note:*** *The paths to match against are absolute, but when building a path with the `to` option, they can be relative to the web app's root*
 
 #### Title
 Each redirect directive is introduced with a name. In the example, this is `My-Userpage-Path-Directive`, which may be a little long. This name should have no spaces, or colons, but apart from that can be *anything*. It doesn't actually affect how the programme runs in any way, except it makes the directive's purpose clearer, and is added as a comment preceding the rule in the `.htaccess` file.
 
 #### When
-The `when` condition is a regex expression must be matched before the rule will be run. This is a way of making sure that the rule is only run when you need it to be run. In the case of our example, only when the first characters of the path are "user/" followed by one or more number. For more information about what you can put here, head over to the [Apache .htaccess docs](http://httpd.apache.org/docs/current/mod/mod_rewrite.html#rewritecond).
+The `when` condition is optional and is a regex expression which must be matched before the rule will be run. This is a way of making sure that the rule is only run when you need it to be run. In the case of our example, only when the first characters of the path are "user/" followed by one or more number. For more information about what you can put here, head over to the [Apache .htaccess docs](http://httpd.apache.org/docs/current/mod/mod_rewrite.html#rewritecond).
 
 #### From
 The `from` option is a way of collecting any information about the path. So in our case, we want to capture the user id, so we give a regex, where the user id is captured, so we can use it later as the get variable.
