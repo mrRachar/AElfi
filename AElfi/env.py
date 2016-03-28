@@ -29,6 +29,7 @@ try:
     templatelocation = builtins.request.pageloc[:found(builtins.request.pageloc.rfind('.'))] + '.template'
     if os.path.isfile(templatelocation):                                        # If the template is a file,
         with open(templatelocation, encoding=config.charset) as templatefile:   #  open it and,
-            print(template.Template(templatefile.read()).render(**display))     #  print it rendered with mako
+            print(config.template_module.render(templatefile.read(), display))  #  print it rendered with their template engine choice (default mako)
+            #print(template.Template(templatefile.read()).render(**display))     #  print it rendered with mako
 except AttributeError:
     pass

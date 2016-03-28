@@ -6,14 +6,14 @@ In this example, we are directing requests for "users/*userid*/", e.g. `users/13
 ```YAML
 Paths:
     My-Userpage-Path-Directive:
-        when: ^users/[0-9]+
-        from: ^users/([0-9]+)
+        when: users/[0-9]+
+        from: users/([0-9]+)
         to: users.py?user=$1
         options: QSA
 ```
 *A quick example of a path directive. This example is referenced throughout explanations; some regex knowledge required*
 
-***Note:*** *Paths are all relative to the root of the web-app. This means if your web app is in `/var/www/apache2/myapp`, and the file is `/var/www/apache2/myapp/dashboard/index.py`, the path will be `dashboard/index.py`*
+***Note:*** *The paths to match against are relative to the root of your server*
 
 #### Title
 Each redirect directive is introduced with a name. In the example, this is `My-Userpage-Path-Directive`, which may be a little long. This name should have no spaces, or colons, but apart from that can be *anything*. It doesn't actually affect how the programme runs in any way, except it makes the directive's purpose clearer, and is added as a comment preceding the rule in the `.htaccess` file.

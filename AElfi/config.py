@@ -1,4 +1,4 @@
-import yaml
+import yaml, importlib.util
 
 class Configuration:
     """The configurations that the user has chosen for AElfi in general"""
@@ -19,3 +19,12 @@ class Configuration:
 
         # Store what charset to send documents as being by default
         self.charset = config['Charset']
+
+        # Store the templating module specified
+        if 'Template-Module' not in config:
+            config['Template-Module'] = 'mako'
+
+        module_specs = importlib.util.spec_from_file_location(config['Template-Module'], './templating/{}.py'.format(config['Template-Module']))
+        self.template_module = importlib.util.module_from_spec(module_specs)
+        module_specs.loader.exec_module(self.template_module)
+        self.template_module_name = config['Template-Module']
