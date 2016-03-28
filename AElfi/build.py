@@ -43,7 +43,7 @@ class Rewrite:
                     name='Hide "{}"'.format(path),
                     conditions=[('%{REQUEST_FILENAME}', '^'+re.escape(HTAccessDocument.cleanpath(path, toabsolute=True)))],
                     collect='(.*)',
-                    destination='',
+                    destination='-',
                     options=['R=404']
                 )
 
@@ -53,7 +53,7 @@ class Rewrite:
                     name='Forbid "{}"'.format(path),
                     conditions=[('%{REQUEST_FILENAME}', '^'+re.escape(HTAccessDocument.cleanpath(path, toabsolute=True)))],
                     collect='(.*)',
-                    destination='',
+                    destination='-',
                     options=['F']
                 )
 
