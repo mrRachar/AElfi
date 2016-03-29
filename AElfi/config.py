@@ -25,7 +25,7 @@ class Configuration:
         if 'Template-Module' not in config:
             config['Template-Module'] = 'mako'
 
-        self.template_module = SourceFileLoader(config['Template-Module'], './templating/{}.py'.format(config['Template-Module'])).load_module()
+        self.template_module = SourceFileLoader('template_' + config['Template-Module'], './templating/{}.py'.format(config['Template-Module'])).load_module()
         #module_specs = importlib.util.spec_from_file_location(, )
         #self.template_module = importlib.util.module_from_spec(module_specs)
         #module_specs.loader.exec_module(self.template_module)
