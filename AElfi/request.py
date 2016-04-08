@@ -5,20 +5,43 @@ from collections import OrderedDict as odict
 from http import cookies
 from config import Configuration
 from agent import Agent
+from urllib import parse
 
 config = Configuration('../aelfi.conf')
+
+
+# Request Section #
 
 class Request:
     
     def __init__(self, get: str, post: str, *, pageloc: str=''):
         #GET arguments
-        self.args = odict((arg.split('=')[0], arg.split('=')[1])
+        self.args = odict((parse.unquote(arg.split('=')[0]), parse.unquote(arg.split('=')[1]))
                   for arg in get.split('&') if len(arg.split("=")) != 1)
         #GET keywords
-        self.keywords = [arg for arg in get.split('&') if '=' not in arg]
+        self.keywords = [parse.unquote(arg) for arg in get.split('&') if '=' not in arg]
         #POST all
-        self.fields = odict((arg.split('=')[0], arg.split('=')[1] if len(arg.split('=')) > 1 else None)
+        self.fields = odict((parse.unquote(arg.split('=')[0]), parse.unquote(arg.split('=')[1]) if len(arg.split('=')) > 1 else None)
                             for arg in post.split('&') if arg.split('=')[0] != '')
+
+        #RAW GET arguments
+        self.raw_args = odict((arg.split('=')[0], arg.split('=')[1])
+                  for arg in get.split('&') if len(arg.split("=")) != 1)
+        #RAW GET keywords
+        self.raw_keywords = [arg for arg in get.split('&') if '=' not in arg]
+        #RAW POST all
+        self.raw_fields = odict((arg.split('=')[0], arg.split('=')[1] if len(arg.split('=')) > 1 else None)
+                            for arg in post.split('&') if arg.split('=')[0] != '')
+
+        #+ PLUS GET arguments
+        self.plus_args = odict((parse.unquote_plus(arg.split('=')[0]), parse.unquote_plus(arg.split('=')[1]))
+                  for arg in get.split('&') if len(arg.split("=")) != 1)
+        #+ PLUS GET keywords
+        self.plus_keywords = [parse.unquote_plus(arg) for arg in get.split('&') if '=' not in arg]
+        #+ PLUS POST all
+        self.plus_fields = odict((parse.unquote_plus(arg.split('=')[0]), parse.unquote_plus(arg.split('=')[1]) if len(arg.split('=')) > 1 else None)
+                            for arg in post.split('&') if arg.split('=')[0] != '')
+
         self.header = {
             'user agent': os.environ['HTTP_USER_AGENT'],
             'ip': os.environ['REMOTE_ADDR'],
@@ -47,6 +70,27 @@ class Request:
         return odict((k, v) for k, v in self.fields.items())
 
     @property
+    def raw_get(self) -> dict:
+        get = odict((k, v) for k, v in self.raw_args.items())
+        get.update((k, None) for k in self.raw_keywords)
+        return get
+
+    @property
+    def raw_post(self) -> dict:
+        return odict((k, v) for k, v in self.raw_fields.items())
+
+    @property
+    def plus_get(self) -> dict:
+        get = odict((k, v) for k, v in self.plus_args.items())
+        get.update((k, None) for k in self.plus_keywords)
+        return get
+
+    @property
+    def plus_post(self) -> dict:
+        return odict((k, v) for k, v in self.plus_fields.items())
+
+
+    @property
     def cookies(self) -> cookies.SimpleCookie:
         return self.__cookies
 
@@ -56,6 +100,9 @@ class Request:
 
     def __getitem__(self, headerkey: str):
         return self.header[headerkey]
+
+
+# Response Section #
 
 class Status:
     __code = 0
@@ -78,8 +125,10 @@ class Status:
     def __str__(self) -> str:
         return str(self.code) + (' ' + self.message if self.message else '')
 
+
 class Response:
     __status = Status(200)
+    Status = Status
 
     def __init__(self, page: str=''):
         self.headersent = False
@@ -131,7 +180,7 @@ class Response:
             return
         print('\n'.join('{}: {}'.format(k, v) for k, v in
                                                 self.header.items()))
-        print('Status Code: {}'.format(self.__status))
+        print('Status Code: {!s}'.format(self.__status))
 
         if self.cookies:
             print(self.cookies)

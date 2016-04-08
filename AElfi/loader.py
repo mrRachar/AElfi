@@ -16,7 +16,8 @@ request.pageloc = '../' + request.args.pop('AELFI_PAGE')  # Store the file locat
 try:                                            # Try to,
     with open(request.pageloc, 'rb') as file:   #  open the python file
         response.page = file.read()                 # Read the contents of the file, saving it as the page contents
-except IOError as e:            # Treat can't find file as Internal Server Error
+except IOError as e:            # Treat can't find file as 404, hope redirect will happen
+    response.status = 404, "File Not Found"
     response.sendheader()       # Make sure headers are away
     print()                     # Print a clear line to separate the error trace
     print('', e, e.__traceback__, sep='<br/>\n') #Print the error and the traceback
@@ -25,10 +26,11 @@ except IOError as e:            # Treat can't find file as Internal Server Error
 builtins.request, builtins.response = request, response
 try:                # Try to:
     import env      #  execute the script
-except BaseException as e:            # Treat can't find file as Internal Server Error
+except BaseException as e:      # Treat as Internal Server Error
+    response.status = 500, "Internal Server Error"
     response.sendheader()       # Make sure headers are away
     print()                     # Print a clear line to separate the error trace
-    print('', e, e.__traceback__, sep='<br/>\n') # Print the error and the traceback
+    print('Error:', e, e.__traceback__, end='<br/>\n') # Print the error and the traceback
 
 
 
