@@ -13,7 +13,7 @@ These are all the key-value pairs in the GET request. This is basically all the 
 
 For the request "index.py?name=hello&settings&page=4&advanced", the args would be `OrderedDict({'name': 'hello', 'page': '4'})`.
 
-*Also available with the [`plus_`](#plus) and [`raw_`](#raw) prefixes
+*Also available with the [`plus_`](#plus_) and [`raw_`](#raw_) prefixes
 
 #### `cookies`
 Cookies is a `http.cookies.SimpleCookies` object. These are the cookies the client has sent to you, which should only be those for your site. See the [Python documentation](https://docs.python.org/3/library/http.cookies.html#http.cookies.SimpleCookie) for more information on SimpleCookies objects.
@@ -24,12 +24,12 @@ This is the directory your script is running in, so `/hello/world/index.py`'s di
 #### `fields`
 These are all the POST variables that the client has sent you, if they have sent any, as key-value pairs. It is advisable to use [`post`](#post) instead for clarity.
 
-*Also available with the [`plus_`](#plus) and [`raw_`](#raw) prefixes
+*Also available with the [`plus_`](#plus_) and [`raw_`](#raw_) prefixes
 
 #### `get`
 These are any get variables you have been sent, either in [`keywords`](#keywords) or in [`args`](#args). They are in a OrderedDict, args first, and keywords have the value `None`.
 
-*Also available with the [`plus_`](#plus) and [`raw_`](#raw) prefixes
+*Also available with the [`plus_`](#plus_) and [`raw_`](#raw_) prefixes
 
 For the request "index.py?name=hello&settings&page=4&advanced", get would be `OrderedDict({'name': 'hello', 'page': '4', 'settings':None, 'advanced': None})`.
 #### `header`
@@ -47,7 +47,7 @@ These are all the headers the user has sent you in a dictionary. They can also b
 All the GET variables that weren't assigned to anything, stored in a list in the order they were sent. 
 For the request "index.py?name=hello&settings&page=4&advanced", the keywords would be `['settings', 'advanced']`.
 
-*Also available with the [`plus_`](#plus) and [`raw_`](#raw) prefixes
+*Also available with the [`plus_`](#plus_) and [`raw_`](#raw_) prefixes
 
 #### `location`
 The location of the script being run on the server.
@@ -55,7 +55,7 @@ The location of the script being run on the server.
 #### `post`
 These are all the POST variables that the client has sent you, if they have sent any, as key-value pairs, in the order they were sent in.
 
-*Also available with the [`plus_`](#plus) and [`raw_`](#raw) prefixes
+*Also available with the [`plus_`](#plus_) and [`raw_`](#raw_) prefixes
 
 #### `plus_...`
 [`get`](#get), [`args`](#args), [`keywords`](#keywords) and [`post`](#post) are also availible with the `plus_` prefix. This uses Python's 
