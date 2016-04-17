@@ -224,12 +224,12 @@ class Response:
         sys.stdout.flush()
 
     def refresh(self, time=0):
-        self.response['Refresh'] = '{}'.format(time)
+        self['Refresh'] = '{}'.format(time)
         self.print()
         sys.exit()
 
     def redirect(self, url, time=0):
-        self.response['Refresh'] = '{};url={}'.format(time, url)
+        self['Refresh'] = '{};url={}'.format(time, url)
         self.print()
         sys.exit()
     
