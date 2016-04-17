@@ -9,7 +9,8 @@ The user agent, the string version stored in `.header['user agent']`, is parsed 
 *[Find more about `UserAgent` and user agent parsing](agent.md)*
 
 #### `args`
-These are all the key-value pairs in the GET request. This is basically all the get variables which have values assigned to them. They are in a OrderedDict, in the order they were sent.
+These are all the key-value pairs in the GET request. This is basically all the get variables which have values assigned to them. They are in a 
+OrderedDict, in the order they were sent.  This is the same as `q_args`.
 
 For the request "index.py?name=hello&settings&page=4&advanced", the args would be `OrderedDict({'name': 'hello', 'page': '4'})`.
 
@@ -22,12 +23,14 @@ Cookies is a `http.cookies.SimpleCookies` object. These are the cookies the clie
 This is the directory your script is running in, so `/hello/world/index.py`'s directory is `/hello/world/`.
 
 #### `fields`
-These are all the POST variables that the client has sent you, if they have sent any, as key-value pairs. It is advisable to use [`post`](#post) instead for clarity.
+These are all the POST variables that the client has sent you, if they have sent any, as key-value pairs. It is advisable to use [`post`](#post) 
+instead for clarity. This is the same as plus_fields.
 
-*Also available with the [`plus_`](#plus_) and [`raw_`](#raw_) prefixes
+*Also available with the [`q_`](#q_) and [`raw_`](#raw_) prefixes
 
 #### `get`
-These are any get variables you have been sent, either in [`keywords`](#keywords) or in [`args`](#args). They are in a OrderedDict, args first, and keywords have the value `None`.
+These are any get variables you have been sent, either in [`keywords`](#keywords) or in [`args`](#args). They are in a OrderedDict, args first, and 
+keywords have the value `None`.  This is the same as `q_get`.
 
 *Also available with the [`plus_`](#plus_) and [`raw_`](#raw_) prefixes
 
@@ -38,29 +41,42 @@ These are all the headers the user has sent you in a dictionary. They can also b
 - 'ip', the IP address of the client
 - 'server', the server's name
 - 'protocol', the protocol being used, such as which HTTP version, e.g. 'HTTP/1.1'
-- 'connection type', the type of HTTP connection used. e.g. 'Keep-Alive'
+- 'connection type', the type of HTTP connection used. e.g. 'Keep-Alive', will default to '' if no connection type given in the environment variables
 - 'method', whether the request was made with 'POST' or 'GET'
 - 'accepted language', the language the user has specified *(normally ignored)*
 - 'location', the location of the file the user requested, not neccessarily the file you're at now *(such as with paths or 404 error messages)*.
 
 #### `keywords`
 All the GET variables that weren't assigned to anything, stored in a list in the order they were sent. 
-For the request "index.py?name=hello&settings&page=4&advanced", the keywords would be `['settings', 'advanced']`.
+For the request "index.py?name=hello&settings&page=4&advanced", the keywords would be `['settings', 'advanced']`. This is the same as `q_keywords`.
 
 *Also available with the [`plus_`](#plus_) and [`raw_`](#raw_) prefixes
 
 #### `location`
 The location of the script being run on the server.
 
-#### `post`
-These are all the POST variables that the client has sent you, if they have sent any, as key-value pairs, in the order they were sent in.
-
-*Also available with the [`plus_`](#plus_) and [`raw_`](#raw_) prefixes
-
 #### `plus_...`
 [`get`](#get), [`args`](#args), [`keywords`](#keywords) and [`post`](#post) are also availible with the `plus_` prefix. This uses Python's 
-`unquote_plus` method, which also turns `+` into ` `.
+`unquote_plus` method, which also turns `+` into ` `. *This is the default fields and post attributes point to.*
+
+#### `post`
+These are all the POST variables that the client has sent you, if they have sent any, as key-value pairs, in the order they were sent in. This is 
+the same as plus_post.
+
+*Also available with the [`q_`](#q_) and [`raw_`](#raw_) prefixes
+
+#### `q_...`
+[`get`](#get), [`args`](#args), [`keywords`](#keywords) and [`post`](#post) are also availible with the `q_` prefix. This is normally the default and 
+uses Python's `unquote` method. *This is the default get, args and keywords attributes point to.*
 
 #### `raw_...`
 [`get`](#get), [`args`](#args), [`keywords`](#keywords) and [`post`](#post) are also availible with the `raw_` prefix. This doesn't url decode the 
 string.
+
+#### `redirect(`*`url, time=0`*`)`
+This function will redirect the page to the given url, after the given time. If no time is given, it will do so immediately. It will also stop running
+ the rest of the programme.
+
+#### `refresh(`*`time=0`*`)`
+This function will refresh the page, after the given time. If no time is given, it will do so immediately. It will also stop running the rest of 
+the programme.

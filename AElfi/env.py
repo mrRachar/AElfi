@@ -1,5 +1,5 @@
 import builtins                     # The builtins, including request and response objects
-import os                           # To change working director
+import os, sys                      # To change working director, to edit the python import path
 from config import Configuration    # For the encoding to open the file with
 
 config = Configuration('../aelfi.conf') # Load in the configurations
@@ -7,11 +7,15 @@ config = Configuration('../aelfi.conf') # Load in the configurations
 # Set up the main built in values
 request = builtins.request
 response = builtins.response
-display = {}    # An empty dict which will be passed to mako later
-print = response.print #To replace `print`'s functionality, so it can also handle auto header sending
+display = {             # A dict which will be passed to mako later, containing `request` and `response` by default for ease-of-use
+            'request': builtins.request,
+            'response': builtins.response,
+          }
+print = response.print  # To replace `print`'s functionality, so it can also handle auto header sending
 
 aelfi_directory = os.getcwd()
-os.chdir(builtins.request.directory)    #  change the directory to the location of the document, so to allow it to act normal
+os.chdir(builtins.request.directory)    # Change the directory to the location of the document, so to allow it to act normal
+sys.path.insert(0, './')                # Allow files to be imported from the directory the file is going to be run in
 
 exec(builtins.response.page)    # Run the script
 
@@ -29,6 +33,5 @@ try:
     if os.path.isfile(templatelocation):                                        # If the template is a file,
         with open(templatelocation, encoding=config.charset) as templatefile:   #  open it and,
             print(config.template_module.render(templatefile.read(), display))  #  print it rendered with their template engine choice (default mako)
-            #print(template.Template(templatefile.read()).render(**display))     #  print it rendered with mako
 except AttributeError:
     pass

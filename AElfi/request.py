@@ -15,39 +15,46 @@ config = Configuration('../aelfi.conf')
 class Request:
     
     def __init__(self, get: str, post: str, *, pageloc: str=''):
-        #GET arguments
-        self.args = odict((parse.unquote(arg.split('=')[0]), parse.unquote(arg.split('=')[1]))
+        #(UN)QUOTE GET arguments
+        self.q_args = odict((parse.unquote(arg.split('=')[0]), parse.unquote(arg.split('=')[1]))
                   for arg in get.split('&') if len(arg.split("=")) != 1)
-        #GET keywords
-        self.keywords = [parse.unquote(arg) for arg in get.split('&') if '=' not in arg]
-        #POST all
-        self.fields = odict((parse.unquote(arg.split('=')[0]), parse.unquote(arg.split('=')[1]) if len(arg.split('=')) > 1 else None)
+        #(UN)QUOTE GET keywords
+        self.q_keywords = [parse.unquote(arg) for arg in get.split('&') if '=' not in arg]
+        #(UN)QUOTE POST all
+        self.q_fields = odict((parse.unquote(arg.split('=')[0]), parse.unquote(arg.split('=')[1]) if len(arg.split('=')) > 1 else None)
                             for arg in post.split('&') if arg.split('=')[0] != '')
 
-        #RAW GET arguments
+        # RAW GET arguments
         self.raw_args = odict((arg.split('=')[0], arg.split('=')[1])
                   for arg in get.split('&') if len(arg.split("=")) != 1)
-        #RAW GET keywords
+        # RAW GET keywords
         self.raw_keywords = [arg for arg in get.split('&') if '=' not in arg]
-        #RAW POST all
+        # RAW POST all
         self.raw_fields = odict((arg.split('=')[0], arg.split('=')[1] if len(arg.split('=')) > 1 else None)
                             for arg in post.split('&') if arg.split('=')[0] != '')
 
-        #+ PLUS GET arguments
+        # + PLUS GET arguments
         self.plus_args = odict((parse.unquote_plus(arg.split('=')[0]), parse.unquote_plus(arg.split('=')[1]))
                   for arg in get.split('&') if len(arg.split("=")) != 1)
-        #+ PLUS GET keywords
+        # + PLUS GET keywords
         self.plus_keywords = [parse.unquote_plus(arg) for arg in get.split('&') if '=' not in arg]
-        #+ PLUS POST all
+        # + PLUS POST all
         self.plus_fields = odict((parse.unquote_plus(arg.split('=')[0]), parse.unquote_plus(arg.split('=')[1]) if len(arg.split('=')) > 1 else None)
                             for arg in post.split('&') if arg.split('=')[0] != '')
+
+        # Default GET arguments
+        self.args = self.q_args
+        # Default GET keywords
+        self.keywords = self.q_keywords
+        # Default POST all
+        self.fields = self.plus_fields
 
         self.header = {
             'user agent': os.environ['HTTP_USER_AGENT'],
             'ip': os.environ['REMOTE_ADDR'],
             'server': os.environ['SERVER_NAME'],
             'protocol': os.environ['SERVER_PROTOCOL'],
-            'connection type': os.environ['HTTP_CONNECTION'],
+            'connection type': os.environ.get('HTTP_CONNECTION', ''),
             'method': os.environ['REQUEST_METHOD'],
             'accepted language': os.environ['HTTP_ACCEPT_LANGUAGE'],
             'location': os.environ['REQUEST_URI'],
@@ -68,6 +75,16 @@ class Request:
     @property
     def post(self) -> dict:
         return odict((k, v) for k, v in self.fields.items())
+
+    @property
+    def q_get(self) -> dict:
+        get = odict((k, v) for k, v in self.q_args.items())
+        get.update((k, None) for k in self.q_keywords)
+        return get
+
+    @property
+    def q_post(self) -> dict:
+        return odict((k, v) for k, v in self.q_fields.items())
 
     @property
     def raw_get(self) -> dict:
@@ -100,6 +117,14 @@ class Request:
 
     def __getitem__(self, headerkey: str):
         return self.header[headerkey]
+
+    def refresh(self, time=0):
+        self.response['Refresh'] = '{}'.format(time)
+        sys.exit()
+
+    def redirect(self, url, time=0):
+        self.response['Refresh'] = '{};url={}'.format(time, url)
+        sys.exit()
 
 
 # Response Section #
