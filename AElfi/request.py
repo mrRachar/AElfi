@@ -198,9 +198,9 @@ class Response:
         print('\n'.join('{}: {}'.format(k, v) for k, v in
                                                 self.header.items()))
         print('Status Code: {!s}'.format(self.__status))
-
         if self.cookies:
             print(self.cookies)
+
         self.headersent = True
         print()
         sys.stdout.flush()
@@ -226,11 +226,14 @@ class Response:
     def refresh(self, time=0):
         self['Refresh'] = '{}'.format(time)
         self.print()
-        sys.exit()
+        self.close()
 
     def redirect(self, url, time=0):
         self['Refresh'] = '{};url={}'.format(time, url)
         self.print()
+        self.close()
+
+    def close(self):
+        self.print('<!--')
         sys.exit()
-    
         
