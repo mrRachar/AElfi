@@ -30,9 +30,13 @@ sudo service apache2 restart
 Download the latest release, and save it as the folder you want to build your web-app in.
 
    *or*
+ 
+Use [AElfi tools](https://github.com/mrRachar/AElfi-tools) for a quick and easy installation
+
+   *or*
 ```bash
-wget https://github.com/mrRachar/AElfi/archive/v0.2.1-r1.zip
-unzip -d "YourWebAppFolderName" v0.2.1-r1.zip
+wget https://github.com/mrRachar/AElfi/archive/v0.3.0.zip
+unzip -d "YourWebAppFolderName" v0.3.0.zip
 ```
 
 ##### Get Going
