@@ -225,12 +225,10 @@ class Response:
 
     def refresh(self, time=0):
         self['Refresh'] = '{}'.format(time)
-        self.print()
         self.close()
 
     def redirect(self, url, time=0):
         self['Refresh'] = '{};url={}'.format(time, url)
-        self.print()
         self.close()
 
     def close(self):
