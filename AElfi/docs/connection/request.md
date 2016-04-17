@@ -72,11 +72,3 @@ uses Python's `unquote` method. *This is the default get, args and keywords attr
 #### `raw_...`
 [`get`](#get), [`args`](#args), [`keywords`](#keywords) and [`post`](#post) are also availible with the `raw_` prefix. This doesn't url decode the 
 string.
-
-#### `redirect(`*`url, time=0`*`)`
-This function will redirect the page to the given url, after the given time. If no time is given, it will do so immediately. It will also stop running
- the rest of the programme.
-
-#### `refresh(`*`time=0`*`)`
-This function will refresh the page, after the given time. If no time is given, it will do so immediately. It will also stop running the rest of 
-the programme.

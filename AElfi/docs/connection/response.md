@@ -21,6 +21,14 @@ This variable will be `False`, until the headers have been sent, either by [prin
 `response.print` is where AElfi's special print fuction is defined. It is the same as calling `print` in the global scope. It will automatically send 
 headers the first time it is called, so you don't have to.
 
+#### `redirect(`*`url, time=0`*`)`
+This function will redirect the page to the given url, after the given time. If no time is given, it will do so immediately. It will also stop running
+ the rest of the programme.
+
+#### `refresh(`*`time=0`*`)`
+This function will refresh the page, after the given time. If no time is given, it will do so immediately. It will also stop running the rest of 
+the programme.
+
 #### `sendheader`
 This will send all the headers to the client. As it is automatically called by the `print` function, or when a template runs, you don't need to call 
 it, unless you've got an empty page with no template, or you need to send the headers early for some reason.

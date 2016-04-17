@@ -118,14 +118,6 @@ class Request:
     def __getitem__(self, headerkey: str):
         return self.header[headerkey]
 
-    def refresh(self, time=0):
-        self.response['Refresh'] = '{}'.format(time)
-        sys.exit()
-
-    def redirect(self, url, time=0):
-        self.response['Refresh'] = '{};url={}'.format(time, url)
-        sys.exit()
-
 
 # Response Section #
 
@@ -230,5 +222,15 @@ class Response:
         sys.stdout.buffer.write(str(sep).encode(config.charset).join(str(value).encode(config.charset) for value in values)
                                 + str(end).encode(config.charset))
         sys.stdout.flush()
+
+    def refresh(self, time=0):
+        self.response['Refresh'] = '{}'.format(time)
+        self.print()
+        sys.exit()
+
+    def redirect(self, url, time=0):
+        self.response['Refresh'] = '{};url={}'.format(time, url)
+        self.print()
+        sys.exit()
     
         
