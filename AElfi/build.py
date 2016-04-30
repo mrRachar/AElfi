@@ -20,7 +20,7 @@ class Rewrite:
     def __str__(self) -> str:
         string = '#{}\n'.format(self.name)
         for value, condition in self.conditions:
-            string += 'RewriteCond %{{REQUEST_FILENAME}} {condition}\n'.format(value=value, condition=condition)
+            string += 'RewriteCond {value} {condition}\n'.format(value=value, condition=condition)
         string += 'RewriteRule "{self.collect}" "{self.destination}"'.format(self=self)
         if self.options:
             string += ' [{options}]'.format(options=','.join(self.options))
