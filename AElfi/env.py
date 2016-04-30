@@ -14,8 +14,9 @@ display = {             # A dict which will be passed to mako later, containing 
 print = response.print  # To replace `print`'s functionality, so it can also handle auto header sending
 
 aelfi_directory = os.getcwd()
-os.chdir(builtins.request.directory)    # Change the directory to the location of the document, so to allow it to act normal
-sys.path.insert(0, './')                # Allow files to be imported from the directory the file is going to be run in
+os.chdir(builtins.request.directory)                # Change the directory to the location of the document, so to allow it to act normal
+sys.path.insert(0, './')                            # Allow files to be imported from the directory the file is going to be run in
+sys.path.insert(1, aelfi_directory + '/modules')    # Allow files to be imported from the directory the file is going to be run in
 
 exec(builtins.response.page)    # Run the script
 
@@ -29,7 +30,7 @@ try:
     os.chdir(aelfi_directory)   #Go back to the AElfi directory, as paths will be relative to here
     # Get the location of where the template could be,
     #  use the found function to convert `-1`s to None, so to not cut if no '.' found
-    templatelocation = builtins.request.pageloc[:found(builtins.request.pageloc.rfind('.'))] + '.template'
+    templatelocation = builtins.request.pageloc[:found(builtins.request.pageloc.rfind('.'))] + '.view'
     if os.path.isfile(templatelocation):                                        # If the template is a file,
         with open(templatelocation, encoding=config.charset) as templatefile:   #  open it and,
             print(config.template_module.render(templatefile.read(), display))  #  print it rendered with their template engine choice (default mako)
