@@ -20,7 +20,7 @@ class Rewrite:
     def __str__(self) -> str:
         string = '#{}\n'.format(self.name)
         for value, condition in self.conditions:
-            string += 'RewriteCond %{{REQUEST_FILENAME}} {condition}\n'.format(value=value, condition=condition)
+            string += 'RewriteCond {value} {condition}\n'.format(value=value, condition=condition)
         string += 'RewriteRule "{self.collect}" "{self.destination}"'.format(self=self)
         if self.options:
             string += ' [{options}]'.format(options=','.join(self.options))
@@ -66,6 +66,12 @@ class HTAccessDocument:
     indices = []
     rewrite_engine = True
 
+    def __init__(self):
+        self.error_documents = {}
+        self.rewrites = []
+        self.handlers = []
+        self.indices = []
+
     @classmethod
     def fromyaml(cls, file, *, page: int=0):
         document = tuple(yaml.safe_load_all(file))[page]
@@ -101,9 +107,9 @@ class HTAccessDocument:
             htaccess.rewrites += [
                     Rewrite(
                         name,
-                        ([('%{REQUEST_FILENAME}', when) for when in redirect['when']]
+                        ([('%{REQUEST_URI}', when) for when in redirect['when']]
                                 if isinstance(redirect['when'], list)
-                                else [('%{REQUEST_FILENAME}', redirect['when'])])
+                                else [('%{REQUEST_URI}', redirect['when'])])
                             if 'when' in redirect else [],
                         redirect['from'],
                         redirect['to'],
@@ -111,7 +117,7 @@ class HTAccessDocument:
                             set(redirect.get('options', [])) | {'L'}
                             if isinstance(redirect.get('options', []), list)
                             else {redirect.get('options'), 'L'}
-                        )
+                        ) if redirect.get('options', '') != 'default' else ['L', 'QSA']
                     ) for name, redirect in document['Paths'].items()
                 ]
         if document.get('Index'):
@@ -165,7 +171,7 @@ if __name__ == '__main__':
         htaccess.rewrites.append(Rewrite('Python Documents Redirect', [('%{REQUEST_FILENAME}', '.py$')], "^(.*)$", "AElfi/loader.py?AELFI_PAGE=$1", ["L","QSA"]))
         htaccess.rewrites.insert(0,
                     Rewrite('Aelfi Config File Protection', [('%{REQUEST_FILENAME}', '^'+re.escape(htaccess.cleanpath('./', toabsolute=True)) + '/aelfi\.conf$')], "^.*$", "", ["F"]))
-        htaccess.rewrites.insert(0, Rewrite('Template File Protection', [('%{REQUEST_FILENAME}', '\.template$')], "^.*$", "", "F"))
+        htaccess.rewrites.insert(0, Rewrite('View File Protection', [('%{REQUEST_FILENAME}', '\.view$')], "^.*$", "", "F"))
         htaccess.require = 'all granted'
         htaccess.options = '+ExecCGI -Indexes'
         htaccess.handlers = ['cgi-script .py .pl']
@@ -173,5 +179,16 @@ if __name__ == '__main__':
             htaccess.indices = ["index.py", "index.php", "index.html", "index.htm",
                                 "index.xml", "index.txt", "index.jpg", "index.png",
                                 "index.gif", "index.jpeg", "index.pl"]
+        try:
+            mod_folder, module_dirs = next(os.walk('AElfi/modules'))[:2]
+            for module_dir in module_dirs:
+                try:
+                    module_htaccess = HTAccessDocument.fromyaml(open(mod_folder + '/' + module_dir + '/aelfi.conf'))
+                    htaccess.indices += module_htaccess.indices
+                    htaccess.rewrites += module_htaccess.rewrites
+                except:
+                    continue
+        except:
+            pass
         htaccess_file.write(str(htaccess))
         print('built!')

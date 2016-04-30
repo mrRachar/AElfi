@@ -9,11 +9,14 @@ Paths:
         when: users/[0-9]+
         from: users/([0-9]+)
         to: users.py?user=$1
-        options: QSA
+        options: default
 ```
 *A quick example of a path directive. This example is referenced throughout explanations; some regex knowledge required*
 
-***Note:*** *The paths to match against are absolute, but when building a path with the `to` option, they can be relative to the web app's root*
+***Note:*** *The paths to match against are the URI requests, such as 'index.py' or 'resources/files/system.py'*
+
+### Forbid and Hide
+You can build automatic path directives with the `Forbid` and `Hide` directives, which go in the root of `aelfi.conf`, and take a YAML list.
 
 #### Title
 Each redirect directive is introduced with a name. In the example, this is `My-Userpage-Path-Directive`, which may be a little long. This name should have no spaces, or colons, but apart from that can be *anything*. It doesn't actually affect how the programme runs in any way, except it makes the directive's purpose clearer, and is added as a comment preceding the rule in the `.htaccess` file.
@@ -27,3 +30,5 @@ The `from` option is a way of collecting any information about the path. So in o
 #### To
 The `to` option says where we need to send this user locally. This of course could be a normal URL, but most likely you are going to want to put some of you regex captures in it. To do this, just put the group number (starting from 1) after a dollar sign, so if the capture group 1 is '562', then `users?user=$1` produces "users?user=562". This is how "directories" and "pages" can be converted into a GET variable form.
 
+#### Options
+These are the other options you can use with the path. It can be one YAML value or a list of them. If you want the usual list, write `default`.
