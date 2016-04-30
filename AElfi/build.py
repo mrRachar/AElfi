@@ -179,13 +179,16 @@ if __name__ == '__main__':
             htaccess.indices = ["index.py", "index.php", "index.html", "index.htm",
                                 "index.xml", "index.txt", "index.jpg", "index.png",
                                 "index.gif", "index.jpeg", "index.pl"]
-        mod_folder, module_dirs = next(os.walk('AElfi/modules'))[:2]
-        for module_dir in module_dirs:
-            try:
-                module_htaccess = HTAccessDocument.fromyaml(open(mod_folder + '/' + module_dir + '/aelfi.conf'))
-                htaccess.indices += module_htaccess.indices
-                htaccess.rewrites += module_htaccess.rewrites
-            except:
-                continue
+        try:
+            mod_folder, module_dirs = next(os.walk('AElfi/modules'))[:2]
+            for module_dir in module_dirs:
+                try:
+                    module_htaccess = HTAccessDocument.fromyaml(open(mod_folder + '/' + module_dir + '/aelfi.conf'))
+                    htaccess.indices += module_htaccess.indices
+                    htaccess.rewrites += module_htaccess.rewrites
+                except:
+                    continue
+        except:
+            pass
         htaccess_file.write(str(htaccess))
         print('built!')
