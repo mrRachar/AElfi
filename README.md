@@ -35,8 +35,9 @@ Use [AElfi tools](https://github.com/mrRachar/AElfi-tools) for a quick and easy 
 
    *or*
 ```bash
-wget https://github.com/mrRachar/AElfi/archive/v0.3.1.zip
-unzip -d "YourWebAppFolderName" v0.3.1.zip
+wget https://github.com/mrRachar/AElfi/archive/v0.4.0.zip
+unzip v0.4.0.zip
+mv AElfi-0.4.0 "Your Webapp Name"
 ```
 
 ##### Get Going

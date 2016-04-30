@@ -1,5 +1,5 @@
 # AElfi Documentation 
-***Version v0.3.1-r1***
+***Version v0.4.0***
 
 These documents should explain the key concepts in AElfi. Whilst they may miss a few small areas, they should contain enough to get started properly, and use AElfi to its full potential
 
