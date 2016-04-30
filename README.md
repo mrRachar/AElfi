@@ -27,11 +27,12 @@ sudo service apache2 restart
 
 #### Instructions
 ##### Install
-Download the latest release, and save it as the folder you want to build your web-app in.
+
+Use [AElfi tools](https://github.com/mrRachar/AElfi-tools) for a quick and easy installation
 
    *or*
- 
-Use [AElfi tools](https://github.com/mrRachar/AElfi-tools) for a quick and easy installation
+   
+Download the latest release, and save it as the folder you want to build your web-app in.
 
    *or*
 ```bash

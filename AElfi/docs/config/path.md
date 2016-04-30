@@ -15,6 +15,9 @@ Paths:
 
 ***Note:*** *The paths to match against are the URI requests, such as 'index.py' or 'resources/files/system.py'*
 
+### Forbid and Hide
+You can build automatic path directives with the `Forbid` and `Hide` directives, which go in the root of `aelfi.conf`, and take a YAML list.
+
 #### Title
 Each redirect directive is introduced with a name. In the example, this is `My-Userpage-Path-Directive`, which may be a little long. This name should have no spaces, or colons, but apart from that can be *anything*. It doesn't actually affect how the programme runs in any way, except it makes the directive's purpose clearer, and is added as a comment preceding the rule in the `.htaccess` file.
 
