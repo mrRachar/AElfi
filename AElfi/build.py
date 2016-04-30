@@ -109,7 +109,7 @@ class HTAccessDocument:
                         name,
                         ([('%{REQUEST_URI}', when) for when in redirect['when']]
                                 if isinstance(redirect['when'], list)
-                                else [('%{REQUEST_FILENAME}', redirect['when'])])
+                                else [('%{REQUEST_URI}', redirect['when'])])
                             if 'when' in redirect else [],
                         redirect['from'],
                         redirect['to'],
