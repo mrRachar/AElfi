@@ -5,6 +5,9 @@ A simple wrapper framework for Python 3 projects on Apache2
 
 Instead of messing around with complicated frameworks, AElfi does all the hard work for you, without making the project too heavy. Just put the AElfi files in your folder, customise the config file if you want to, and run `AElfi/build.py`, and you're set to go! Plus, with integrated [**mako** template](http://www.makotemplates.org/) support, you don't have to worry about messy view scripts.
 
+![Python 3.4+](https://img.shields.io/badge/python-3.4%2B-blue.svg "Fully working, probably can work with lower versions")
+![stars](https://img.shields.io/github/stars/mrRachar/AElfi.svg "Low, very low")
+
 ## Advantages
 
  1. Pure Python 3, no Python 2 problems or other extras
