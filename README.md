@@ -41,8 +41,8 @@ Download the latest release, and save it as the folder you want to build your we
    *or*
 ```bash
 wget https://github.com/mrRachar/AElfi/archive/v0.4.0.zip
-unzip v0.4.0.zip
-mv AElfi-0.4.0 "Your Webapp Name"
+unzip v0.4.5.zip
+mv AElfi-0.4.5 "Your Webapp Name"
 ```
 
 ##### Get Going
