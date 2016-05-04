@@ -165,10 +165,10 @@ class HTAccessDocument:
 if __name__ == '__main__':
     if os.getcwd().endswith('AElfi'):
         print('Please make sure to run this tool from the projects root directory, not the `AELfi` folder!\nRunning Anyway...\n')
-    
+
     with open('./.htaccess', 'w') as htaccess_file:
         htaccess = HTAccessDocument.fromyaml(open('./aelfi.conf'), page=1)
-        htaccess.rewrites.append(Rewrite('Python Documents Redirect', [('%{REQUEST_FILENAME}', '.py$')], "^(.*)$", "AElfi/loader.py?AELFI_PAGE=$1", ["L","QSA"]))
+        htaccess.rewrites.append(Rewrite('Python Documents Redirect', [('%{REQUEST_FILENAME}', '.py$'), ('%{REQUEST_FILENAME}', '-f')], "^(.*)$", "AElfi/loader.py?AELFI_PAGE=$1", ["L","QSA"]))
         htaccess.rewrites.insert(0,
                     Rewrite('Aelfi Config File Protection', [('%{REQUEST_FILENAME}', '^'+re.escape(htaccess.cleanpath('./', toabsolute=True)) + '/aelfi\.conf$')], "^.*$", "", ["F"]))
         htaccess.rewrites.insert(0, Rewrite('View File Protection', [('%{REQUEST_FILENAME}', '\.view$')], "^.*$", "", "F"))

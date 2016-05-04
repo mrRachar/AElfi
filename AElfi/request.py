@@ -1,6 +1,7 @@
 #!usr/bin/env python3
 #-*- coding: UTF-8 -*-
 import os, sys
+import traceback, re, html                      # For error printing
 from collections import OrderedDict as odict
 from http import cookies
 from config import Configuration
@@ -13,7 +14,7 @@ config = Configuration('../aelfi.conf')
 # Request Section #
 
 class Request:
-    
+
     def __init__(self, get: str, post: str, *, pageloc: str=''):
         #(UN)QUOTE GET arguments
         self.q_args = odict((parse.unquote(arg.split('=')[0]), parse.unquote(arg.split('=')[1]))
@@ -65,7 +66,7 @@ class Request:
             self.__cookies.load(os.environ['HTTP_COOKIE'])
         self.pageloc = pageloc
         self.location = ''
-        
+
     @property
     def get(self) -> dict:
         get = odict((k, v) for k, v in self.args.items())
@@ -197,7 +198,7 @@ class Response:
             return
         print('\n'.join('{}: {}'.format(k, v) for k, v in
                                                 self.header.items()))
-        print('Status Code: {!s}'.format(self.__status))
+        print('Status: {!s}'.format(self.__status))
         if self.cookies:
             print(self.cookies)
 
@@ -234,4 +235,56 @@ class Response:
     def close(self):
         self.print('<!--')
         sys.exit()
-        
+
+    def senderror(self, error):      # Treat as Internal Server Error
+        self.status = 500, "Internal Server Error"
+        self.sendheader()       # Make sure headers are away
+        #self.print('raised {}:'.format(type(e).__name__), e, '<br/></br>', '<br/>'.join(traceback.format_tb(e.__traceback__)), end='<br/>\n') # Print the error and the traceback
+        f_tb = traceback.format_tb(error.__traceback__)
+        #self.print(f_tb)
+        #self.print()
+        self.print("""\
+<html>
+    <head>
+        <title>Scripts Errors</title>
+        <style>
+            body {{
+                font-family: sans-serif;
+                text-align: center;
+            }}
+            div#t {{
+                text-align: center;
+            }}
+            table {{
+                border: none;
+                display: inline-block;
+            }}
+            td {{
+                text-align: left;
+                margin: 0;
+                padding: 3px;
+            }}
+            td:hover {{
+                background: #eeeeee;
+                font-weight: 600;
+            }}
+        </style>
+    </head>
+    <body>
+        <h2>Internal Error Raised</h2>
+        <p style="font-weight:bold">A {errortype} was raised in line {line}: <em>{message}</em></p>
+        <table><tr><td>{quote}</td></tr></table>
+        <h3>Traceback</h3>
+        <div id='t'>
+            <table>
+                {traceback}
+            </table>
+        </div>
+    </body>
+</html>""".format(
+            errortype = error.__class__.__name__,
+            message = str(error),
+            line = re.search(r'line (\d+)', f_tb[-1]).group(1) if re.search(r'line (\d+)', f_tb[-1]) else '(unknown)',
+            quote = html.escape(f_tb[-1]).strip('\n \t'),
+            traceback = "\n            ".join("<tr><td>{}</td></tr>".format(html.escape(part).strip('\n \t')) for part in f_tb[1:])
+        ))

@@ -20,19 +20,23 @@ sys.path.insert(1, aelfi_directory + '/modules')    # Allow files to be imported
 
 exec(builtins.response.page)    # Run the script
 
-# If the script didn't already,
-response.sendheader() # see if we can send the headers again
+# Make a found function, so as to allow for better slicing
+found = lambda x: x if x is not -1 else None
+finaldot = builtins.request.pageloc.rfind('.')  # Get the location of the final dot of the file: 'xyz . py'
+os.chdir(aelfi_directory)   #Go back to the AElfi directory, as paths will be relative to here
 
-try:
-    # Make a found function, so as to allow for better slicing
-    found = lambda x: x if x is not -1 else None
-    finaldot = builtins.request.pageloc.rfind('.')  # Get the location of the final dot of the file: 'xyz . py'
-    os.chdir(aelfi_directory)   #Go back to the AElfi directory, as paths will be relative to here
-    # Get the location of where the template could be,
-    #  use the found function to convert `-1`s to None, so to not cut if no '.' found
-    templatelocation = builtins.request.pageloc[:found(builtins.request.pageloc.rfind('.'))] + '.view'
-    if os.path.isfile(templatelocation):                                        # If the template is a file,
-        with open(templatelocation, encoding=config.charset) as templatefile:   #  open it and,
-            print(config.template_module.render(templatefile.read(), display))  #  print it rendered with their template engine choice (default mako)
-except AttributeError:
-    pass
+# Get the location of where the template could be,
+#  use the found function to convert `-1`s to None, so to not cut if no '.' found
+templatelocation = builtins.request.pageloc[:found(builtins.request.pageloc.rfind('.'))] + '.view'
+if os.path.isfile(templatelocation):                                        # If the template is a file,
+    with open(templatelocation, encoding=config.charset) as templatefile:   #  open it and,
+        rendering = config.template_module.render(
+            templatefile.read(),
+            os.path.abspath('../'),
+            display,
+            os.path.abspath(templatelocation)
+            )  #  print it rendered with their template engine choice (default mako)
+        # If the script didn't already, see if we can send the headers again,
+        response.sendheader() #  but leave til now 'cause rendering may change them, if the script doesn't print
+        # Print the rendering
+        print(rendering)
