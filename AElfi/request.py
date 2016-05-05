@@ -1,5 +1,22 @@
 #!usr/bin/env python3
 #-*- coding: UTF-8 -*-
+"""This stores the Request, Response and related classes, for their objects in the AElfi environment as part of the Connection Object Model
+
+When your getting a page ready for the user, you are dealing with two parts: the user's request, and your response. Apache litters information about
+    these in many different variables, from os.environ to sys.stdin, and doesn't give them in a very nice format. This can make your code hard to
+    write, as you have to find everything, and scavenge the information from it once you have, and even harder to understand later.
+
+AElfi, natrually, puts everything nice and neatly in two objects, one a Request instance, one a Response. These objects contain everything you need to
+    work out exactly the what, how and who of the user, and to control exactly what you giving them back. They are both already in the global scope,
+    so you've got them automatically.
+
+Request - Request contains all the information that the user has sent. This includes any 'GET' or 'POST' variables, as well as cookies, protocol, ip,
+    and requested URL, even the language their browser asked for. It also contains the user agent, which has been parsed.
+
+Response - To control your response other then how the page looks like, you will need to use response. This contains the HTTP headers and any cookies
+    you're sending back.
+"""
+
 import os, sys
 import traceback, re, html                      # For error printing
 from collections import OrderedDict as odict
@@ -14,8 +31,14 @@ config = Configuration('../aelfi.conf')
 # Request Section #
 
 class Request:
+    """The request object, request, allows you access to all the information the user has sent you. It is, like all COM objects, automatically available for you in the global scope.
+
+    Anything in header can also be accessed by subscripting the request object, so request.header['ip'] and request['ip'] are the same.
+    """
 
     def __init__(self, get: str, post: str, *, pageloc: str=''):
+        """Set up the request using the given get string, post string, and page location."""
+
         #(UN)QUOTE GET arguments
         self.q_args = odict((parse.unquote(arg.split('=')[0]), parse.unquote(arg.split('=')[1]))
                   for arg in get.split('&') if len(arg.split("=")) != 1)
@@ -69,12 +92,26 @@ class Request:
 
     @property
     def get(self) -> dict:
+        """These are any get variables you have been sent, either in keywords or in args. They are in a OrderedDict, args first, and keywords have the
+        value None. This is the same as q_get.
+
+        For the request "index.py?name=hello&settings&page=4&advanced", get would be:
+            OrderedDict({'name': 'hello', 'page': '4', 'settings':None, 'advanced': None}).
+        *Also available with the plus_ and raw_ prefixes
+        """
+
+
         get = odict((k, v) for k, v in self.args.items())
         get.update((k, None) for k in self.keywords)
         return get
 
     @property
     def post(self) -> dict:
+        """These are all the POST variables that the client has sent you, if they have sent any, as key-value pairs, in the order they were sent in.
+        This is the same as plus_post.
+
+        *Also available with the q_ and raw_ prefixes
+        """
         return odict((k, v) for k, v in self.fields.items())
 
     @property
@@ -110,6 +147,11 @@ class Request:
 
     @property
     def cookies(self) -> cookies.SimpleCookie:
+        """Cookies is a http.cookies.SimpleCookies object with the cookies sent by the client.
+
+        These are the cookies the client has sent to you, which should only be those for your site. See the Python documentation for more information
+        on SimpleCookies objects.
+        """
         return self.__cookies
 
     @property
