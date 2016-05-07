@@ -30,5 +30,9 @@ The `from` option is a way of collecting any information about the path. So in o
 #### To
 The `to` option says where we need to send this user locally. This of course could be a normal URL, but most likely you are going to want to put some of you regex captures in it. To do this, just put the group number (starting from 1) after a dollar sign, so if the capture group 1 is '562', then `users?user=$1` produces "users?user=562". This is how "directories" and "pages" can be converted into a GET variable form.
 
+#### Var
+The `var` option allows you to choose what *mod_rewrite* variable you want to check against. It can be in the form of `request-uri`, `REQUEST_URI` 
+or even `ReQueST UrI`, which all correlate to .htaccess variable `%{REQUEST_URI}`. Other ones, for example are `request-filename`
+
 #### Options
 These are the other options you can use with the path. It can be one YAML value or a list of them. If you want the usual list, write `default`.

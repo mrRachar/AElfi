@@ -104,15 +104,22 @@ class HTAccessDocument:
                 Rewrite.of_protect(directory) for directory in document['Protect']
                 ]
         if document.get('Paths'):
+            rewr_var = lambda v: "%{" + v.upper().replace(' ', '_').replace('-', '_') + "}"
             htaccess.rewrites += [
                     Rewrite(
+                        # Title
                         name,
-                        ([('%{REQUEST_URI}', when) for when in redirect['when']]
+                        # When
+                        ([(rewr_var(redirect.get('var', 'request-uri')), when)
+                                    for when in redirect['when']]
                                 if isinstance(redirect['when'], list)
-                                else [('%{REQUEST_URI}', redirect['when'])])
+                                else [(rewr_var(redirect.get('var','request-uri')), redirect['when'])])
                             if 'when' in redirect else [],
+                        # From
                         redirect['from'],
+                        # To
                         redirect['to'],
+                        # Options
                         list(
                             set(redirect.get('options', [])) | {'L'}
                             if isinstance(redirect.get('options', []), list)
@@ -155,10 +162,12 @@ class HTAccessDocument:
         elif not toabsolute or path == '':
             return path
 
-        actual_dir = os.getcwd()
-        os.chdir(location)
+        if location != './':
+            actual_dir = os.getcwd()
+            os.chdir(location)
         absolute_path = os.path.abspath(path)
-        os.chdir(actual_dir)
+        if location != './':
+            os.chdir(actual_dir)
         return absolute_path
 
 
@@ -168,7 +177,7 @@ if __name__ == '__main__':
 
     with open('./.htaccess', 'w') as htaccess_file:
         htaccess = HTAccessDocument.fromyaml(open('./aelfi.conf'), page=1)
-        htaccess.rewrites.append(Rewrite('Python Documents Redirect', [('%{REQUEST_FILENAME}', '.py$'), ('%{REQUEST_FILENAME}', '-f')], "^(.*)$", "AElfi/loader.py?AELFI_PAGE=$1", ["L","QSA"]))
+        htaccess.rewrites.append(Rewrite('Python Documents Redirect', [('%{REQUEST_FILENAME}', '.py$'), ('%{REQUEST_FILENAME}', '-f')], "^(.*)$", "AElfi/loader.py?AELFI_PAGE=$1", ["END","QSA"]))
         htaccess.rewrites.insert(0,
                     Rewrite('Aelfi Config File Protection', [('%{REQUEST_FILENAME}', '^'+re.escape(htaccess.cleanpath('./', toabsolute=True)) + '/aelfi\.conf$')], "^.*$", "", ["F"]))
         htaccess.rewrites.insert(0, Rewrite('View File Protection', [('%{REQUEST_FILENAME}', '\.view$')], "^.*$", "", "F"))

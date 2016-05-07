@@ -14,3 +14,5 @@ Request contains all the information that the user has sent you. This includes a
 To control your response other then how the page looks like, you will need to use `response`. This contains the HTTP headers and any cookies you're sending back.
 
 *[Find out more about the `response` object](response.md)*
+
+***Note:*** *The `__name__` variable is `'__web__'` in the main python script*
