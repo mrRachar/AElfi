@@ -44,6 +44,7 @@ These are all the headers the user has sent you in a dictionary. They can also b
 - 'connection type', the type of HTTP connection used. e.g. 'Keep-Alive', will default to '' if no connection type given in the environment variables
 - 'method', whether the request was made with 'POST' or 'GET'
 - 'accepted language', the language the user has specified *(normally ignored)*
+- 'language', the first language the user has specified
 - 'location', the location of the file the user requested, not neccessarily the file you're at now *(such as with paths or 404 error messages)*.
 
 #### `keywords`

@@ -18,7 +18,8 @@ Response - To control your response other then how the page looks like, you will
 """
 
 import os, sys
-import traceback, re, html                      # For error printing
+import traceback, re, html                      # For error printing, and re for post file scraping aswell
+import tempfile                                 # Use for getting uploaded files
 from collections import OrderedDict as odict
 from http import cookies
 from config import Configuration
@@ -30,14 +31,24 @@ config = Configuration('../aelfi.conf')
 
 # Request Section #
 
+class UploadedFile:
+    name = ''
+    contenttype = ''
+    file = None
+    def __init__(self, name='', contenttype=''):
+        self.name = name or self.name
+        self.contenttype = contenttype or self.contenttype
+        self.file = tempfile.TemporaryFile('w+b')
+
 class Request:
     """The request object, request, allows you access to all the information the user has sent you. It is, like all COM objects, automatically available for you in the global scope.
 
     Anything in header can also be accessed by subscripting the request object, so request.header['ip'] and request['ip'] are the same.
     """
 
-    def __init__(self, get: str, post: str, *, pageloc: str=''):
+    def __init__(self, get: str, post, *, pageloc: str=''):
         """Set up the request using the given get string, post string, and page location."""
+        post = post.buffer.read()
 
         #(UN)QUOTE GET arguments
         self.q_args = odict((parse.unquote(arg.split('=')[0]), parse.unquote(arg.split('=')[1]))
@@ -45,8 +56,7 @@ class Request:
         #(UN)QUOTE GET keywords
         self.q_keywords = [parse.unquote(arg) for arg in get.split('&') if '=' not in arg]
         #(UN)QUOTE POST all
-        self.q_fields = odict((parse.unquote(arg.split('=')[0]), parse.unquote(arg.split('=')[1]) if len(arg.split('=')) > 1 else None)
-                            for arg in post.split('&') if arg.split('=')[0] != '')
+        self.q_fields = self.parse_post(post, parse.unquote)
 
         # RAW GET arguments
         self.raw_args = odict((arg.split('=')[0], arg.split('=')[1])
@@ -54,8 +64,7 @@ class Request:
         # RAW GET keywords
         self.raw_keywords = [arg for arg in get.split('&') if '=' not in arg]
         # RAW POST all
-        self.raw_fields = odict((arg.split('=')[0], arg.split('=')[1] if len(arg.split('=')) > 1 else None)
-                            for arg in post.split('&') if arg.split('=')[0] != '')
+        self.raw_fields = self.parse_post(post)
 
         # + PLUS GET arguments
         self.plus_args = odict((parse.unquote_plus(arg.split('=')[0]), parse.unquote_plus(arg.split('=')[1]))
@@ -63,8 +72,7 @@ class Request:
         # + PLUS GET keywords
         self.plus_keywords = [parse.unquote_plus(arg) for arg in get.split('&') if '=' not in arg]
         # + PLUS POST all
-        self.plus_fields = odict((parse.unquote_plus(arg.split('=')[0]), parse.unquote_plus(arg.split('=')[1]) if len(arg.split('=')) > 1 else None)
-                            for arg in post.split('&') if arg.split('=')[0] != '')
+        self.plus_fields = self.parse_post(post, parse.unquote_plus)
 
         # Default GET arguments
         self.args = self.q_args
@@ -81,6 +89,7 @@ class Request:
             'connection type': os.environ.get('HTTP_CONNECTION', ''),
             'method': os.environ['REQUEST_METHOD'],
             'accepted language': os.environ['HTTP_ACCEPT_LANGUAGE'],
+            'language': os.environ['HTTP_ACCEPT_LANGUAGE'].split(',')[0],
             'location': os.environ['REQUEST_URI'],
         }
         self.agent = Agent(self.header['user agent'])
@@ -161,6 +170,35 @@ class Request:
     def __getitem__(self, headerkey: str):
         return self.header[headerkey]
 
+    @staticmethod
+    def parse_post(querystring, map_f=(lambda x: x)) -> odict:
+        if os.environ.get('CONTENT_TYPE', '').startswith('multipart/form-data'):
+            nextline = lambda string: string[string.index(b'\n')+1:]
+            querystring = querystring.lstrip(b'\n\r \t')
+            boundary = b'--' + re.match(rb'multipart/form-data;\s*boundary=(-+\w+)', os.environ['CONTENT_TYPE'].encode(config.charset)).group(1)
+            post = odict()
+            for arg in querystring.split(boundary)[1:-1]:
+                arg = arg.lstrip(b'\n\r \t')
+                name, filename = re.match(rb'(?:Content-Disposition:\s*form-data;\s*)?name=("[^"]+"|\'[^\']\')(?:; (?:filename=("[^"]+"|\'[^\']\'))?)?', arg).groups()
+                name, filename = name.decode(config.charset), filename.decode(config.charset)
+                arg = nextline(arg)
+                if filename is None:
+                    arg = nextline(arg)[:-1]
+                    post[name[1:-1]] = arg.decode(config.charset)
+                    continue
+                contenttype = re.match(rb'Content-Type:\s*([A-Za-z0-9/-_:]+)', arg).group(1).decode(config.charset)
+                uploaded_file = UploadedFile(name=filename[1:-1], contenttype=contenttype)
+                arg = nextline(nextline(arg))[:-1]
+                uploaded_file.file.write(arg)
+                uploaded_file.file.seek(0)
+                post[name[1:-1]] = uploaded_file
+            return post
+        else:
+            querystring = querystring.decode(config.charset)
+            return odict((map_f(arg.split('=')[0]), map_f(arg.split('=')[1])
+                if len(arg.split('=')) > 1
+                else None)
+            for arg in querystring.split('&') if arg.split('=')[0] != '')
 
 # Response Section #
 

@@ -5,13 +5,16 @@ from request import Request, Response
 import os, sys, builtins, traceback
 
 # Create the main page loading variables
-request = Request(os.environ['QUERY_STRING'], sys.stdin.read()) # The request, based of the query string (GET) and stdin.read (POST)
+request = Request(os.environ['QUERY_STRING'], sys.stdin)        # The request, based of the query string (GET) and stdin (POST)
 response = Response()                                           # Create an empty response file, for the page to fill in
 
 # Handle the page location
 request.location = request.args['AELFI_PAGE']           # Set the request file location to what is given
 request.pageloc = '../' + request.args.pop('AELFI_PAGE')  # Store the file location for use in script, removing it from the GET vars passed to page
 
+for get in (request.args, request.get, request.plus_args, request.plus_get):
+    if 'AELFI_PAGE' in get:
+        get.pop('AELFI_PAGE')
 
 try:                                            # Try to,
     with open(request.pageloc, 'rb') as file:   #  open the python file

@@ -121,10 +121,10 @@ class HTAccessDocument:
                         redirect['to'],
                         # Options
                         list(
-                            set(redirect.get('options', [])) | {'L'}
+                            set(redirect.get('options', []))
                             if isinstance(redirect.get('options', []), list)
-                            else {redirect.get('options'), 'L'}
-                        ) if redirect.get('options', '') != 'default' else ['L', 'QSA']
+                            else {redirect.get('options')}
+                        ) if redirect.get('options', '') != 'default' else ['QSA']
                     ) for name, redirect in document['Paths'].items()
                 ]
         if document.get('Index'):
@@ -149,7 +149,7 @@ class HTAccessDocument:
         representation += 'RewriteEngine {}\n'.format('on' if self.rewrite_engine else 'off')
 
         for error, document in sorted(self.error_documents.items()):
-            representation += 'ErrorDocument {number} "{file}"\n'.format(number=error, file=self.cleanpath(document, toabsolute=True))
+            representation += 'ErrorDocument {number} "{file}"\n'.format(number=error, file=self.cleanpath(document, toabsolute=False))
 
         for rewrite in self.rewrites:
             representation += '\n{!s}'.format(rewrite)

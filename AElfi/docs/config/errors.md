@@ -8,6 +8,6 @@ Errors:
 ```
 *An example handling the errors 403 and 404*
 
-***Note:*** *Not only can paths relative to the web apps root, but error paths can also contain the `text:` descriptor, which means the text is shown directly to the user*
+***Note:*** *Paths must be relative to the apache DocumentRoot in the case of error handler files, due to limitations of .htaccess files. They can also contain the `text:` descriptor, which means the text is shown directly to the user*
 
 If you want to access the original page the user was trying to get to, especially helpful when you're handling a 404 error, you can access it in the [`request.headers['location']`](../connection/request.md) variable, which always contains the original page the user was trying for.
