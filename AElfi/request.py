@@ -180,12 +180,13 @@ class Request:
             for arg in querystring.split(boundary)[1:-1]:
                 arg = arg.lstrip(b'\n\r \t')
                 name, filename = re.match(rb'(?:Content-Disposition:\s*form-data;\s*)?name=("[^"]+"|\'[^\']\')(?:; (?:filename=("[^"]+"|\'[^\']\'))?)?', arg).groups()
-                name, filename = name.decode(config.charset), filename.decode(config.charset)
                 arg = nextline(arg)
                 if filename is None:
                     arg = nextline(arg)[:-1]
+                    name = name.decode(config.charset)
                     post[name[1:-1]] = arg.decode(config.charset)
                     continue
+                name, filename = name.decode(config.charset), filename.decode(config.charset)
                 contenttype = re.match(rb'Content-Type:\s*([A-Za-z0-9/-_:]+)', arg).group(1).decode(config.charset)
                 uploaded_file = UploadedFile(name=filename[1:-1], contenttype=contenttype)
                 arg = nextline(nextline(arg))[:-1]
