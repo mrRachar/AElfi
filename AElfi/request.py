@@ -184,7 +184,7 @@ class Request:
                 if filename is None:
                     arg = nextline(arg)[:-1]
                     name = name.decode(config.charset)
-                    post[name[1:-1]] = arg.decode(config.charset)
+                    post[name[1:-1]] = arg.decode(config.charset) if arg.decode(config.charset)[-1] != '\r' else arg.decode(config.charset)[:-1]
                     continue
                 name, filename = name.decode(config.charset), filename.decode(config.charset)
                 contenttype = re.match(rb'Content-Type:\s*([A-Za-z0-9/-_:]+)', arg).group(1).decode(config.charset)
