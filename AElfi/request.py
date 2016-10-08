@@ -328,7 +328,7 @@ class Response:
 
     def close(self):
         self.print('<!--')
-        sys.exit()
+        os._exit(0)
 
     def senderror(self, error):      # Treat as Internal Server Error
         self.status = 500, "Internal Server Error"
