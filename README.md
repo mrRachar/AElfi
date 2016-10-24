@@ -1,5 +1,5 @@
 # AElfi
-A simple wrapper framework for Python 3 projects on Apache2
+A simple wrapper framework for Python 3 projects on Unix Apache2 installations
 
 *[Documentation](AElfi/docs/main.md)*
 
@@ -20,8 +20,8 @@ Instead of messing around with complicated frameworks, AElfi does all the hard w
 ## How to Setup
 ##### Requirements
 
-- The Mako template engine: *`sudo`*`pip3 install mako` *- sudo may be neccessay, depending on your system*
-- PyYAML for *aelfi.conf* files *`sudo`*`pip3 install pyyaml`
+- The **mako** template engine: *`sudo`*`pip3 install mako` *- sudo may be neccessay, depending on your system*
+- **Antlr4 python runtime** for *aelfi.build* files *`sudo`*`pip3 install antlr4-python3-runtime`
 - `AllowOveride` to be on for the entire project folder
 - That `mod_rewrite` is enabled:  
 ```bash

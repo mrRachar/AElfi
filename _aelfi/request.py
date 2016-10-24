@@ -105,7 +105,9 @@ class Request:
         self.__cookies = cookies.SimpleCookie()
         if 'HTTP_COOKIE' in os.environ:
             self.__cookies.load(os.environ['HTTP_COOKIE'])
-        self.pageloc = pageloc
+        #Special internal page location relative to the aelfi folder
+        self.__page_location = pageloc
+        #Normal page location
         self.location = ''
 
     @property
@@ -179,7 +181,7 @@ class Request:
 
     @property
     def directory(self) -> str:
-        return '/'.join(self.pageloc.split('/')[:-1]) + '/'
+        return '/'.join(self.__page_location.split('/')[:-1]) + '/'
 
     def __getitem__(self, headerkey: str):
         return self.header[headerkey]
