@@ -1,4 +1,4 @@
-import yaml
+import json
 from importlib.machinery import SourceFileLoader
 
 class Configuration:
@@ -15,16 +15,15 @@ class Configuration:
 
         # Open the file to read
         with open(file_location) as file:
-            # Get the requested page of the YAML file
-            config = tuple(yaml.safe_load_all(file))[page]
+            config = json.load(file)
 
         # Store what charset to send documents as being by default
-        self.charset = config['Charset']
+        self.charset = config['charset']
 
         # Store the templating module specified
-        if 'Template-Module' not in config:
-            config['Template-Module'] = 'mako'
+        if 'template' not in config:
+            config['template'] = 'mako'
 
         # Load template module from file
-        self.template_module = SourceFileLoader('template_' + config['Template-Module'], './templating/{}.py'.format(config['Template-Module'])).load_module()
-        self.template_module_name = config['Template-Module']
+        self.template_module = SourceFileLoader('template_' + config['template'], './templating/{}.py'.format(config['template'])).load_module()
+        self.template_module_name = config['template']

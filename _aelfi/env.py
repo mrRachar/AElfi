@@ -2,7 +2,7 @@ import builtins                     # The builtins, including request and respon
 import os, sys                      # To change working director, to edit the python import path
 from config import Configuration    # For the encoding to open the file with
 
-config = Configuration('../aelfi.conf') # Load in the configurations
+config = Configuration('config.json') # Load in the configurations
 
 # Set up the main built in values
 request = builtins.request

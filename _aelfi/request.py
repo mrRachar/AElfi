@@ -26,7 +26,7 @@ from config import Configuration
 from agent import Agent
 from urllib import parse
 
-config = Configuration('../aelfi.conf')
+config = Configuration('config.json')
 
 
 # Request Section #
@@ -92,7 +92,8 @@ class Request:
             'language': os.environ['HTTP_ACCEPT_LANGUAGE'].split(',')[0],
             'location': os.environ['REQUEST_URI'],
         }
-        self.agent = Agent(self.header['user agent'])
+        # Leave internal agent empty until requested
+        self.__agent = None
         self.__cookies = cookies.SimpleCookie()
         if 'HTTP_COOKIE' in os.environ:
             self.__cookies.load(os.environ['HTTP_COOKIE'])
@@ -153,6 +154,11 @@ class Request:
     def plus_post(self) -> dict:
         return odict((k, v) for k, v in self.plus_fields.items())
 
+    @property
+    def agent(self) -> Agent:
+        if self.__agent is None:
+            self.__agent = Agent(self.header['user agent'])
+        return self.__agent
 
     @property
     def cookies(self) -> cookies.SimpleCookie:
@@ -213,6 +219,7 @@ class Request:
                 if len(arg.split('=')) > 1
                 else None)
             for arg in querystring.split('&') if arg.split('=')[0] != '')
+
 
 # Response Section #
 
