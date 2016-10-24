@@ -37,11 +37,10 @@ keywords have the value `None`.  This is the same as `q_get`.
 For the request "index.py?name=hello&settings&page=4&advanced", get would be `OrderedDict({'name': 'hello', 'page': '4', 'settings':None, 'advanced': None})`.
 #### `header`
 These are all the headers the user has sent you in a dictionary. They can also be accessed straight by subscripting the `request` object.
-* 'user agent', the user-agent string of the client
+- 'user agent', the user-agent string of the client
 - 'ip', the IP address of the client
-- 'server', the server's name
 - 'protocol', the protocol being used, such as which HTTP version, e.g. 'HTTP/1.1'
-- 'connection type', the type of HTTP connection used. e.g. 'Keep-Alive', will default to '' if no connection type given in the environment variables
+- 'connection', the type of HTTP connection used. e.g. 'Keep-Alive', will default to '' if no connection type given in the environment variables
 - 'method', whether the request was made with 'POST' or 'GET'
 - 'accepted language', the language the user has specified *(normally ignored)*
 - 'language', the first language the user has specified
@@ -73,3 +72,11 @@ uses Python's `unquote` method. *This is the default get, args and keywords attr
 #### `raw_...`
 [`get`](#get), [`args`](#args), [`keywords`](#keywords) and [`post`](#post) are also availible with the `raw_` prefix. This doesn't url decode the 
 string.
+
+#### `server`
+These are the server variables accessible to the programme.
+- 'name', the name the server has been given
+- 'ip', the IP address of the server the code is running on
+- 'port', the port being accessed.
+
+_**Warning**: Although these values can generally be trusted, in rare cases, server set up will consistently give nonsensical values for them_

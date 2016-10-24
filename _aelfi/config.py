@@ -27,3 +27,5 @@ class Configuration:
         # Load template module from file
         self.template_module = SourceFileLoader('template_' + config['template'], './templating/{}.py'.format(config['template'])).load_module()
         self.template_module_name = config['template']
+
+        self.library_paths = config['libraries']

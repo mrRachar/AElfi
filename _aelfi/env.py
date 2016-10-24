@@ -16,8 +16,10 @@ print = response.print  # To replace `print`'s functionality, so it can also han
 aelfi_directory = os.getcwd()
 os.chdir(builtins.request.directory)                # Change the directory to the location of the document, so to allow it to act normal
 sys.path.insert(0, './')                            # Allow files to be imported from the directory the file is going to be run in
-sys.path.insert(1, aelfi_directory + '/modules')    # Allow files to be imported from the directory the file is going to be run in
-__name__ = '__web__'                                # Set this, to aviod appearance of being in env, and to make it more webby
+sys.path.insert(1, aelfi_directory + '/modules')    # Allow files to be imported from the modules directory
+for library_path in config.library_paths:
+    sys.path.insert(1, library_path)                # Add the library paths to all of the libraries the user has stated in the build file
+__name__ = '__web__'                                # Set this, to avoid appearance of being in env, and to make it more webby
 
 exec(builtins.response.page)    # Run the script
 

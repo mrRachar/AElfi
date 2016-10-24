@@ -86,12 +86,20 @@ class Request:
             'ip': os.environ['REMOTE_ADDR'],
             'server': os.environ['SERVER_NAME'],
             'protocol': os.environ['SERVER_PROTOCOL'],
-            'connection type': os.environ.get('HTTP_CONNECTION', ''),
+            'connection': os.environ.get('HTTP_CONNECTION', ''),
             'method': os.environ['REQUEST_METHOD'],
             'accepted language': os.environ['HTTP_ACCEPT_LANGUAGE'],
             'language': os.environ['HTTP_ACCEPT_LANGUAGE'].split(',')[0],
             'location': os.environ['REQUEST_URI'],
         }
+
+        #Provide server information
+        self.server = {
+            'port': os.environ['SERVER_PORT'],
+            'name': os.environ['SERVER_NAME'],
+            'ip': os.environ['SERVER_ADDR'],
+        }
+
         # Leave internal agent empty until requested
         self.__agent = None
         self.__cookies = cookies.SimpleCookie()

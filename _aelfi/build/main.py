@@ -69,13 +69,11 @@ class Variable(ExpressionObject):
             return '%{{{}}}'.format(self.variables[self.value])
         except KeyError:
             try:
-                # DEBUG # print(registry)
                 if self.value.isnumeric():
                     return '${}'.format(self.value)
                 else:
                     return '${}'.format((registry or {})[self.value])
             except KeyError as e:
-                # DEBUG # print('Variable.build#notInRegistry', registry)
                 raise KeyError from e
 
 
@@ -91,7 +89,6 @@ class Capture(Variable):
         return '{}(value={!r}, pattern={!r})'.format(self.__class__.__name__, self.value, self.pattern)
 
     def build(self, *, registry=None) -> str:
-        # DEBUG # print(self.pattern)
         return '({})'.format(self.pattern)
 
 
@@ -115,7 +112,6 @@ class String(ExpressionObject, Matcherable):
 
     def _build(self, *, registry=None) -> str:
         build_string = self.value
-        # DEBUG # print('{}<from String>._build#configured'.format(self.__class__.__name__),build_string)
         interpolation = Variable.regex.search(build_string)
         while interpolation:
             variable = Variable(interpolation.group(1))
@@ -163,7 +159,6 @@ class Path(String, Originatable, Flaggable):
         return '{}(value={!r}, flags={!r})'.format(self.__class__.__name__, self.value, self.flags)
 
     def build(self, *, registry=None, flags=None):
-        # DEBUG # print('Path.build#start', registry)
         return '"{!s}"'.format(self.apply_flags(string=self._build(registry=registry).replace('"', '\\"'), flags=flags))
 
     def build_asmatcher(self, flags=None):
@@ -181,12 +176,10 @@ class Path(String, Originatable, Flaggable):
             applied = os.path.abspath(applied)
 
         if 'e' in flags:
-            # DEBUG # print("Path.apply_flags#eInFlags", applied, flags)
             applied = escape_capturegroups(re.escape(applied))
         elif 'u' not in flags:
             applied = string_swap(applied, '\\.', '.')
             applied = escape_capturegroups(applied)
-        # DEBUG # print('Path.apply_flags#complete', applied)
         return applied
 
     def get_flags(self, extra=None) -> str:
@@ -206,9 +199,7 @@ class Path(String, Originatable, Flaggable):
 
         group_number = 1
         interpolation = Capture.regex.search(build_string)
-        # DEBUG # print("Originatable.build_asorigin#preloop", 'build_string =', build_string, 'interpolation =', interpolation)
         while interpolation:
-            # DEBUG # print("Originatable.build_asorigin#loop", 'interpolation =', interpolation.group())
             capture = Capture(interpolation.group(1), pattern=interpolation.group(2) or '[A-Za-z0-9][A-Za-z0-9-]*')
             build_string = build_string[:interpolation.span(1)[0]-1] + capture.build() + build_string[interpolation.span()[1]:]
             self.registry[capture.value] = group_number
@@ -228,7 +219,6 @@ class Condition(namedtuple('Condition', ['operator', 'left', 'right', 'negate'])
 
     def build(self, *, registry=None) -> str:
         left = self.left.build(registry=registry)
-        # DEBUG # print(self.right)
         right = self.right.build_asmatcher()
         return 'RewriteCond {l} {n}{r}'.format(
                                                 n='!' if self.negate else '',
@@ -347,7 +337,6 @@ class ErrorReroute(namedtuple('ErrorReroute', ['destination', 'error'])):
 
     def build(self) -> str:
         if isinstance(self.destination, Flaggable):
-            # DEBUG # print('ErrorReroute.build#isFlaggable', type(self.destination))
             built_dest = self.destination.build(flags='¦u')
         else:
             built_dest = self.destination.build()
@@ -427,5 +416,6 @@ class Build:
     def build_config(self) -> str:
         return json.dumps({
                             'template': self.template,
-                            'charset':  self.charset
+                            'charset':  self.charset,
+                            'libraries': [library.value for library in self.libraries]
                         })
