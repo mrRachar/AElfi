@@ -1,53 +1,55 @@
-## The Configuration File
-Often you need to control how AElfi runs and manages access to your files. You need *aelfi.conf*, AElfi's universal config file.
+*The new AElfi build system differs from that of previous versions greatly. If you have used previous versions, please refesh your knowledge!*
 
-*aelfi.conf* is a YAML *(YAML Ain't Markup Language)* file, which contains two streams: 
+## AElfi Build Files
 
-- The first controls AElfi
-- The second part controls your web-app
+Every AElfi application has an `aelfi.build` file in its root directory. This file allows you to customise how AElfi is set up, *(when `aelfi 
+project build`  or `python3 _aelfi/build.py` is run)*, and how it's run, from what charset and templating engine is used, to creating routes which 
+all the uri the user entered to be changed locally to something easier. AElfi build files have a special configuration language which is designed 
+to make them easy to read and look nice.
 
-### The First Half - Runtime Configuration
-The first half control's AElfi's behaviour, handling how AElfi runs and processes files when sending them back to the user. This includes the default charset, and nothing else yet.
+*Build files may be left empty, putting stuff in them is completely optional*
 
-- How to control the [*default* charset](charset.md)
+**_Scroll down to see an nice example!_**
 
-### The Second Half - Build Configuration
-Think of this part as describing your web-apps' behaviour. It describes how files should be accessed, so your server can be protected from running bad files, or you can make nicer file names for scripts actually taking in GET variables.
+### Use
 
-- Making one file seem like another with [Path](path.md)s
-- [Protect](protect.md)ing your server from malicious uploads
-- When all goes wrong, saving face by controlling [Errors](errors.md)
-- Where to start with [Indices *Index*](indices.md)
+Use declarations make it possible to configure how AElfi operates. *For those used to the older system, these practically replace runtime configs*
 
-***Note:*** *The file is YAML, and thus values may or may not be quoted. The examples given do vary. As a general rule, only quote if you need to*
+*[Find out more about `use` declarations](use.md)*
 
-## A Nice Example
-```YAML
-# Runtime Configuration    # Here we control how AElfi runs
----                        # Start this part of the document
+### Include
 
-Charset: 'utf-8'           # Any Python recognised one should do the trick
+Include declarations allow for libraries to be added to the sys.path so they're accessible from any file in your applications
 
-...						   # We've finished controlling how AElfi runs
+*[Find out more about `use` declarations](include.md)*
 
-# Build Configuration	   # Let's turn to describing our app's behaviour
----
+### Routes
 
-Errors:					   # What to do in these cases
-    # You'll notice that this starts with `text:`, so is not taken as a path
-    403: "text:Let's just pretend that file doesn't exist [403 Forbidden]"
-    # This one is a relative path
-    404: "errors/404.py"
-    # This one is an absolute path
-    418: "/var/www/teapot/stopthinkingyouregettingcoffee.png"
+Routes, the most important part of build files, allow incoming uris to rerouted to another file to be handled. They also allow files to be protected,
+forbidden, or to pretend there is nothing there, as well as setting up error documents.
 
-Protect:					# Let's protect somewhere
-    - myproject/resources/  # This directory the user might upload to
+*[Find out more about routes](routes.md)*
+ 
+*Here's an example I made earlier, in traditional Blue-Peter style, to explain things better*
+```AElfiBuild
+# Comments can start with a # like in Python, or use /* */ to span multiple lines
 
-Paths:                      # Now we need to reroute our user to a different file
-    CGI-directory:          # Any name will do, it just clarifies it a bit
-        when: '\.py$'       # Only if the file ends in `.py` (regex)
-        from: '^(.*)$'      # Capture the entire file location
-        to: 'cgi/$1'        # Send it to the same place, but from the cgi file
-        options: 'QSA'      # Any extra options we need
+# Use declarations allow you to set what AElfi uses. They are all optional
+# Charset default is uft8
+use charset utf16
+# Template defaults to mako. To use others, see templating docs
+use template jinja2
+
+# Libraries allow you to provide folders,
+#  whose contents (Python files) are importable from across your project
+include <models>
+include <extensions/main>
+
+# Routes are the most important part of build files;
+#  they let you reroute incoming requests,
+#  which allows neater uris for the user!
+# Reroute for products. language is a built in variable whose value is the HTTP ACCEPT LANGUAGE header
+<product.py?id={id}&l={language}> <- <product/{id:[a-zA-Z0-9][a-zA-Z0-9]}>
+# They also allow you to set up error documents
+<errors/500.py> <- error
 ```

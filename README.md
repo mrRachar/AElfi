@@ -1,7 +1,7 @@
 # AElfi
 A simple wrapper framework for Python 3 projects on Unix Apache2 installations
 
-*[Documentation](AElfi/docs/main.md)*
+*[Documentation](_aelfi/docs/main.md)*
 
 Instead of messing around with complicated frameworks, AElfi does all the hard work for you, without making the project too heavy. Just put the AElfi files in your folder, customise the config file if you want to, and run `AElfi/build.py`, and you're set to go! Plus, with integrated [**mako** template](http://www.makotemplates.org/) support, you don't have to worry about messy view scripts.
 

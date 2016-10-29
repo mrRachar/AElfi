@@ -10,7 +10,7 @@ def run():
     build = Build.from_file('aelfi.build')
     build.options = "+ExecCGI -Indexes"
     build.handler = 'cgi-script .py .pl'
-    build.indices = ["index.py", "index.php", "index.html", "index.htm",
+    build.indices = ["index.py", "index.pyv", "index.php", "index.html", "index.htm",
                         "index.xml", "index.txt", "index.jpg", "index.png",
                         "index.gif", "index.jpeg", "index.pl"]
     # Python Documents Redirect
@@ -20,6 +20,16 @@ def run():
                                 conditions=[
                                     Condition('&', Variable('filepath'),  Method('.isfile'), negate=False),
                                     Condition('&', Variable('filepath'),  Regex('\.py$'), negate=False),
+                                ],
+                                options={'END', 'L', 'QSA'}
+                            ))
+    # Template-Base Documents (TBDs) Redirect
+    build.routes.append(Route(
+                                destination=Path('_aelfi/tbd.py?AELFI_TBD_PAGE={1}'),
+                                origins=[Regex('^(.*)$')],
+                                conditions=[
+                                    Condition('&', Variable('filepath'),  Method('.isfile'), negate=False),
+                                    Condition('&', Variable('filepath'),  Regex('\.pyv$'), negate=False),
                                 ],
                                 options={'END', 'L', 'QSA'}
                             ))
