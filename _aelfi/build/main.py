@@ -144,7 +144,7 @@ class Path(String, Originatable, Flaggable):
         frozenset({'u', 'e'})
     })
 
-    def __init__(self, value: str):
+    def __init__(self, value: str, flags=''):
         prefix_match = re.match('(?:([aArRiI])([dDeE])?|([dDeE])([aArRiI])?)?\<', value)
         if value.startswith('<'):
             value = value[1:-1]
@@ -153,6 +153,7 @@ class Path(String, Originatable, Flaggable):
             for group in prefix_match.groups():
                 if isinstance(group, str):
                     self.flags += group.lower()
+        self.flags += flags
         super().__init__(value)
 
     def __repr__(self) -> str:
@@ -263,7 +264,7 @@ class SpecialDestination(String):
     destinations = {'forbid', 'none', 'protect', 'error'}
     def __init__(self, value: str):
         self.options = {
-            'forbid': {'END', 'H=text'},
+            'forbid': {'END', 'F'},
             'none': {'R=404'},
             'protect': {'END', 'H=text/plain'},
             'error': {'R=500'}

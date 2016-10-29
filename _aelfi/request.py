@@ -181,7 +181,7 @@ class Request:
 
     @property
     def directory(self) -> str:
-        return '/'.join(self.__page_location.split('/')[:-1]) + '/'
+        return os.path.dirname(os.path.abspath(self.__page_location))
 
     def __getitem__(self, headerkey: str):
         return self.header[headerkey]
@@ -350,10 +350,7 @@ class Response:
     def senderror(self, error):      # Treat as Internal Server Error
         self.status = 500, "Internal Server Error"
         self.sendheader()       # Make sure headers are away
-        #self.print('raised {}:'.format(type(e).__name__), e, '<br/></br>', '<br/>'.join(traceback.format_tb(e.__traceback__)), end='<br/>\n') # Print the error and the traceback
         f_tb = traceback.format_tb(error.__traceback__)
-        #self.print(f_tb)
-        #self.print()
         self.print("""\
 <html>
     <head>

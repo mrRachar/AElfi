@@ -15,10 +15,12 @@ print = response.print  # To replace `print`'s functionality, so it can also han
 
 aelfi_directory = os.getcwd()
 os.chdir(builtins.request.directory)                # Change the directory to the location of the document, so to allow it to act normal
+
 sys.path.insert(0, './')                            # Allow files to be imported from the directory the file is going to be run in
 sys.path.insert(1, aelfi_directory + '/modules')    # Allow files to be imported from the modules directory
 for library_path in config.library_paths:
     sys.path.insert(1, library_path)                # Add the library paths to all of the libraries the user has stated in the build file
+
 __name__ = '__web__'                                # Set this, to avoid appearance of being in env, and to make it more webby
 
 exec(builtins.response.page)    # Run the script
@@ -30,7 +32,7 @@ os.chdir(aelfi_directory)   #Go back to the AElfi directory, as paths will be re
 
 # Get the location of where the template could be,
 #  use the found function to convert `-1`s to None, so to not cut if no '.' found
-templatelocation = builtins.request.pageloc[:found(builtins.request.pageloc.rfind('.'))] + '.view'
+templatelocation = builtins.request.pageloc[:found(finaldot)] + '.view'
 if os.path.isfile(templatelocation):                                        # If the template is a file,
     with open(templatelocation, encoding=config.charset) as templatefile:   #  open it and,
         rendering = config.template_module.render(

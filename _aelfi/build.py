@@ -38,7 +38,7 @@ def run():
                                 destination=Path('{1}'),
                                 origins=[Regex('^(.*)$')],
                                 conditions=[
-                                    Condition('&', Variable('filepath'),  Path(os.path.abspath('./') + '/?$'), negate=False)
+                                    Condition('&', Variable('filepath'),  Path('./?$', flags='a'), negate=False)
                                 ],
                                 options={'END', 'L', 'QSA'}
                             ))
@@ -47,7 +47,7 @@ def run():
                                 destination=SpecialDestination('-'),
                                 origins=[Regex('^.*$')],
                                 conditions=[
-                                    Condition('&', Variable('filepath'),  Path(os.path.abspath('./') + '/AElfi/?'), negate=False)
+                                    Condition('&', Variable('filepath'),  Path('./_aelfi/?', flags='a'), negate=False)
                                 ],
                                 options={'F'}
                             ))
@@ -56,7 +56,7 @@ def run():
                                 destination=SpecialDestination('-'),
                                 origins=[Regex('^.*$')],
                                 conditions=[
-                                    Condition('&', Variable('filepath'),  Path(os.path.abspath('./') + '/aelfi.conf?$'), negate=False)
+                                    Condition('&', Variable('filepath'),  Path('./aelfi.build$', flags='a'), negate=False)
                                 ],
                                 options={'F'}
                             ))
