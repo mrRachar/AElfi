@@ -9,7 +9,7 @@ def run():
         print('Please make sure to run this tool from the projects root directory, not the `_aelfi` folder!\nRunning Anyway...\n')
     build = Build.from_file('aelfi.build')
     build.options = "+ExecCGI -Indexes"
-    build.handler = 'cgi-script .py .pl'
+    build.handlers = ['cgi-script .py .pl']
     build.indices = ["index.py", "index.pyv", "index.php", "index.html", "index.htm",
                         "index.xml", "index.txt", "index.jpg", "index.png",
                         "index.gif", "index.jpeg", "index.pl"]
