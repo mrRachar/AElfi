@@ -173,7 +173,7 @@ class Path(String, Originatable, Flaggable):
             if '¦' in flags:
                 applied = '/' + applied
         elif 'a' in flags:
-            applied = os.path.abspath(applied)
+            applied = '^' + os.path.abspath(applied)
 
         if 'e' in flags:
             applied = escape_capturegroups(re.escape(applied))
