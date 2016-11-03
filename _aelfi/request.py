@@ -46,7 +46,7 @@ class Request:
     Anything in header can also be accessed by subscripting the request object, so request.header['ip'] and request['ip'] are the same.
     """
 
-    def __init__(self, get: str, post, *, pageloc: str=''):
+    def __init__(self, get: str, post, *, page_location: str=''):
         """Set up the request using the given get string, post string, and page location."""
         post = post.buffer.read()
 
@@ -106,7 +106,7 @@ class Request:
         if 'HTTP_COOKIE' in os.environ:
             self.__cookies.load(os.environ['HTTP_COOKIE'])
         #Special internal page location relative to the aelfi folder
-        self.__page_location = pageloc
+        self._page_location = page_location
         #Normal page location
         self.location = ''
 
@@ -181,7 +181,7 @@ class Request:
 
     @property
     def directory(self) -> str:
-        return os.path.dirname(os.path.abspath(self.__page_location))
+        return os.path.dirname(os.path.abspath(self._page_location))
 
     def __getitem__(self, headerkey: str):
         return self.header[headerkey]

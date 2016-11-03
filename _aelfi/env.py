@@ -27,12 +27,12 @@ exec(builtins.response.page)    # Run the script
 
 # Make a found function, so as to allow for better slicing
 found = lambda x: x if x is not -1 else None
-finaldot = builtins.request.pageloc.rfind('.')  # Get the location of the final dot of the file: 'xyz . py'
+finaldot = builtins.request._page_location.rfind('.')  # Get the location of the final dot of the file: 'xyz . py'
 os.chdir(aelfi_directory)   #Go back to the AElfi directory, as paths will be relative to here
 
 # Get the location of where the template could be,
 #  use the found function to convert `-1`s to None, so to not cut if no '.' found
-templatelocation = builtins.request.pageloc[:found(finaldot)] + '.view'
+templatelocation = builtins.request._page_location[:found(finaldot)] + '.view'
 if os.path.isfile(templatelocation):                                        # If the template is a file,
     with open(templatelocation, encoding=config.charset) as templatefile:   #  open it and,
         rendering = config.template_module.render(

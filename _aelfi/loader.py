@@ -9,16 +9,18 @@ request = Request(os.environ['QUERY_STRING'], sys.stdin)        # The request, b
 response = Response()                                           # Create an empty response file, for the page to fill in
 
 # Handle the page location
-request.location = request.args['AELFI_PAGE']           # Set the request file location to what is given
-request.pageloc = '../' + request.args.pop('AELFI_PAGE')  # Store the file location for use in script, removing it from the GET vars passed to page
+request.location = request.args['AELFI_PAGE']                       # Set the request file location to what is given
+request._page_location = '../' + request.args.pop('AELFI_PAGE')     # Store the file location for use in script, removing it from the GET vars passed to page
 
 for get in (request.args, request.get, request.plus_args, request.plus_get):
-    if 'AELFI_PAGE' in get:
+    try:
         get.pop('AELFI_PAGE')
+    except KeyError:
+        pass
 
-try:                                            # Try to,
-    with open(request.pageloc, 'rb') as file:   #  open the python file
-        response.page = file.read()                 # Read the contents of the file, saving it as the page contents
+try:                                                    # Try to,
+    with open(request._page_location, 'rb') as file:    #  open the python file
+        response.page = file.read()                     # Read the contents of the file, saving it as the page contents
 except IOError as e:            # Treat can't find file as 404, hope redirect will happen
     response.status = 404, "File Not Found"
     response.sendheader()       # Make sure headers are away
