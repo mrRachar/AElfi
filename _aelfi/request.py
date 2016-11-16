@@ -46,13 +46,13 @@ class Request:
     Anything in header can also be accessed by subscripting the request object, so request.header['ip'] and request['ip'] are the same.
     """
 
-    def __init__(self, get: str, post, *, pageloc: str=''):
+    def __init__(self, get: str, post, *, page_location: str=''):
         """Set up the request using the given get string, post string, and page location."""
         post = post.buffer.read()
 
         #(UN)QUOTE GET arguments
         self.q_args = odict((parse.unquote(arg.split('=')[0]), parse.unquote(arg.split('=')[1]))
-                  for arg in get.split('&') if len(arg.split("=")) != 1)
+                  for arg in get.split('&')[::-1] if len(arg.split("=")) != 1)
         #(UN)QUOTE GET keywords
         self.q_keywords = [parse.unquote(arg) for arg in get.split('&') if '=' not in arg]
         #(UN)QUOTE POST all
@@ -60,7 +60,7 @@ class Request:
 
         # RAW GET arguments
         self.raw_args = odict((arg.split('=')[0], arg.split('=')[1])
-                  for arg in get.split('&') if len(arg.split("=")) != 1)
+                  for arg in get.split('&')[::-1] if len(arg.split("=")) != 1)
         # RAW GET keywords
         self.raw_keywords = [arg for arg in get.split('&') if '=' not in arg]
         # RAW POST all
@@ -68,9 +68,9 @@ class Request:
 
         # + PLUS GET arguments
         self.plus_args = odict((parse.unquote_plus(arg.split('=')[0]), parse.unquote_plus(arg.split('=')[1]))
-                  for arg in get.split('&') if len(arg.split("=")) != 1)
+                  for arg in get.split('&')[::-1] if len(arg.split("=")) != 1)
         # + PLUS GET keywords
-        self.plus_keywords = [parse.unquote_plus(arg) for arg in get.split('&') if '=' not in arg]
+        self.plus_keywords = [parse.unquote_plus(arg) for arg in get.split('&')[::-1] if '=' not in arg]
         # + PLUS POST all
         self.plus_fields = self.parse_post(post, parse.unquote_plus)
 
@@ -90,7 +90,9 @@ class Request:
             'method': os.environ['REQUEST_METHOD'],
             'accepted language': os.environ['HTTP_ACCEPT_LANGUAGE'],
             'language': os.environ['HTTP_ACCEPT_LANGUAGE'].split(',')[0],
-            'location': os.environ['REQUEST_URI'],
+            'uri': os.environ['CONTEXT_DOCUMENT_ROOT'] + os.environ['REQUEST_URI'],
+            'location': os.environ['CONTEXT_DOCUMENT_ROOT'] + os.environ['REQUEST_URI'].split('?')[0],
+            'relative uri': os.environ['REQUEST_URI'],
         }
 
         #Provide server information
@@ -106,7 +108,7 @@ class Request:
         if 'HTTP_COOKIE' in os.environ:
             self.__cookies.load(os.environ['HTTP_COOKIE'])
         #Special internal page location relative to the aelfi folder
-        self.__page_location = pageloc
+        self._page_location = page_location
         #Normal page location
         self.location = ''
 
@@ -181,7 +183,7 @@ class Request:
 
     @property
     def directory(self) -> str:
-        return os.path.dirname(os.path.abspath(self.__page_location))
+        return os.path.dirname(os.path.abspath(self._page_location))
 
     def __getitem__(self, headerkey: str):
         return self.header[headerkey]

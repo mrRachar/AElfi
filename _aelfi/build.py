@@ -13,15 +13,15 @@ def run():
     build.indices = ["index.py", "index.pyv", "index.php", "index.html", "index.htm",
                         "index.xml", "index.txt", "index.jpg", "index.png",
                         "index.gif", "index.jpeg", "index.pl"]
-    # Python Documents Redirect
+    # This one wierd trick can help you loose 2 tonnes of stress before you know it,
+    #  honestly, it just gets folder roots into index file requests somehow
     build.routes.append(Route(
-                                destination=Path('_aelfi/loader.py?AELFI_PAGE={1}'),
-                                origins=[Regex('^(.*)$')],
+                                destination=SpecialDestination('-'),
+                                origins=[Regex('(.*)')],
                                 conditions=[
-                                    Condition('&', Variable('filepath'),  Method('.isfile'), negate=False),
-                                    Condition('&', Variable('filepath'),  Regex('\.py$'), negate=False),
+                                    Condition('&', Variable('filepath'),  Regex('/[^\.]*$'), negate=False),
                                 ],
-                                options={'END', 'L', 'QSA'}
+                                options=['L', 'END', 'QSA']
                             ))
     # Template-Base Documents (TBDs) Redirect
     build.routes.append(Route(
@@ -31,7 +31,17 @@ def run():
                                     Condition('&', Variable('filepath'),  Method('.isfile'), negate=False),
                                     Condition('&', Variable('filepath'),  Regex('\.pyv$'), negate=False),
                                 ],
-                                options={'END', 'L', 'QSA'}
+                                options=['L', 'END', 'QSA']
+                            ))
+    # Python Documents Redirect
+    build.routes.append(Route(
+                                destination=Path('_aelfi/loader.py?AELFI_PAGE={1}'),
+                                origins=[Regex('^(.*)$')],
+                                conditions=[
+                                    Condition('&', Variable('filepath'),  Method('.isfile'), negate=False),
+                                    Condition('&', Variable('filepath'),  Regex('\.py$'), negate=False),
+                                ],
+                                options=['L', 'END', 'QSA']
                             ))
     # Index Counter-protection
     build.routes.insert(0, Route(
@@ -40,16 +50,16 @@ def run():
                                 conditions=[
                                     Condition('&', Variable('filepath'),  Path('./?$', flags='a'), negate=False)
                                 ],
-                                options={'END', 'L', 'QSA'}
+                                options=['L', 'END', 'QSA']
                             ))
     # AElfi folder protection
     build.routes.insert(0, Route(
                                 destination=SpecialDestination('-'),
                                 origins=[Regex('^.*$')],
                                 conditions=[
-                                    Condition('&', Variable('filepath'),  Path('./_aelfi/?', flags='a'), negate=False)
+                                    Condition('&', Variable('filepath'),  Path('./_aelfi/[^lt]', flags='a'), negate=False)
                                 ],
-                                options={'F'}
+                                options=['F']
                             ))
     # AElfi build file protection
     build.routes.insert(0, Route(
@@ -58,7 +68,7 @@ def run():
                                 conditions=[
                                     Condition('&', Variable('filepath'),  Path('./aelfi.build$', flags='a'), negate=False)
                                 ],
-                                options={'F'}
+                                options=['F']
                             ))
     # AElfi view file protection
     build.routes.insert(0, Route(
@@ -67,7 +77,7 @@ def run():
                                 conditions=[
                                     Condition('&', Variable('filepath'),  Regex('\.view$'), negate=False)
                                 ],
-                                options={'F'}
+                                options=['F']
                             ))
 
     #Write new versions

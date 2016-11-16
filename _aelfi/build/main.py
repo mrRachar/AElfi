@@ -264,10 +264,10 @@ class SpecialDestination(String):
     destinations = {'forbid', 'none', 'protect', 'error'}
     def __init__(self, value: str):
         self.options = {
-            'forbid': {'END', 'F'},
-            'none': {'R=404'},
-            'protect': {'END', 'H=text/plain'},
-            'error': {'R=500'}
+            'forbid': ['END', 'F'],
+            'none': ['R=404'],
+            'protect': ['END', 'H=text/plain'],
+            'error': ['R=500']
         }.get(value, set())
         super().__init__(value)
 
@@ -288,7 +288,7 @@ class Route(namedtuple('Route', ['destination', 'origins', 'conditions', 'option
                 origins.append(Regex(child.getText()))
             else:
                 origins.append(Path(child.getText()))
-        return cls(destination, origins, conditions, {'L', 'QSA'})
+        return cls(destination, origins, conditions, ['L', 'QSA'])
 
     def build(self) -> str:
         build_string = "# " + self.destination.value
@@ -307,7 +307,7 @@ class Route(namedtuple('Route', ['destination', 'origins', 'conditions', 'option
 
             if isinstance(self.destination, SpecialDestination):
                 built_dest = '-'
-                options |= self.destination.options
+                options += self.destination.options
             elif isinstance(self.destination, Flaggable):
                 built_dest = self.destination.build(registry=origin.registry, flags='r')
             else:

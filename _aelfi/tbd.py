@@ -15,7 +15,7 @@ response = Response()                                           # Create an empt
 
 # Handle the page location
 request.location = request.args['AELFI_TBD_PAGE']               # Set the request file location to what is given
-request.pageloc = '../' + request.args.pop('AELFI_TBD_PAGE')    # Store the file location for use in script, removing it from the GET vars passed to page
+request._page_location = '../' + request.args.pop('AELFI_TBD_PAGE')    # Store the file location for use in script, removing it from the GET vars passed to page
 
 # Set up the main built in values
 display = {             # A dict which will be passed to mako later, containing `request` and `response` by default for ease-of-use
@@ -24,10 +24,14 @@ display = {             # A dict which will be passed to mako later, containing 
           }
 
 for get in (request.args, request.get, request.plus_args, request.plus_get):
-    if 'AELFI_TBD_PAGE' in get:
+    try:
         get.pop('AELFI_TBD_PAGE')
-    if 'AELFI_PAGE' in get:
+    except KeyError:
+        pass
+    try:
         get.pop('AELFI_PAGE')
+    except KeyError:
+        pass
 
 # To make these variables accessible in the templates
 builtins.request, builtins.response = request, response
@@ -37,12 +41,12 @@ sys.path.insert(0, './')                            # Allow files to be imported
 sys.path.insert(1, os.path.abspath('./modules'))    # Allow files to be imported from the aelfi_modules
 
 try:
-    if os.path.isfile(request.pageloc):                                        # If the template is a file,
-        with open(request.pageloc, encoding=config.charset) as templatefile:   #  open it and,
+    if os.path.isfile(request._page_location):                                        # If the template is a file,
+        with open(request._page_location, encoding=config.charset) as templatefile:   #  open it and,
             response.page = templatefile.read()                                #  read the contents of the file, saving it as the page contents
             #aelfi_dir = os.getcwd()
-            abs_pageloc = os.path.abspath(request.pageloc)
-            #os.chdir(os.path.dirname(request.pageloc))
+            abs_pageloc = os.path.abspath(request._page_location)
+            #os.chdir(os.path.dirname(request._page_location))
             # By providing the path to the template_module, the cwd should be changed anyway
             rendering = config.template_module.render(
                 response.page,
