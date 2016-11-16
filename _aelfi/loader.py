@@ -12,6 +12,11 @@ response = Response()                                           # Create an empt
 request.location = request.args['AELFI_PAGE']                       # Set the request file location to what is given
 request._page_location = '../' + request.args.pop('AELFI_PAGE')     # Store the file location for use in script, removing it from the GET vars passed to page
 
+if request['location'].startswith(os.path.abspath('./')):
+    response.senderror(PermissionError('Unallowed path to AElfi folder file'))
+elif not request['location'].startswith(os.path.abspath('../')):
+    response.senderror(PermissionError('That pill doesn\'t exist')) # You cannot escape the matrix that is the project folder
+
 for get in (request.args, request.get, request.plus_args, request.plus_get):
     try:
         get.pop('AELFI_PAGE')

@@ -13,6 +13,16 @@ def run():
     build.indices = ["index.py", "index.pyv", "index.php", "index.html", "index.htm",
                         "index.xml", "index.txt", "index.jpg", "index.png",
                         "index.gif", "index.jpeg", "index.pl"]
+    # This one wierd trick can help you loose 2 tonnes of stress before you know it,
+    #  honestly, it just gets folder roots into index file requests somehow
+    build.routes.append(Route(
+                                destination=SpecialDestination('-'),
+                                origins=[Regex('(.*)')],
+                                conditions=[
+                                    Condition('&', Variable('filepath'),  Regex('/[^\.]*$'), negate=False),
+                                ],
+                                options=['L', 'END', 'QSA']
+                            ))
     # Template-Base Documents (TBDs) Redirect
     build.routes.append(Route(
                                 destination=Path('_aelfi/tbd.py?AELFI_TBD_PAGE={1}'),
@@ -43,14 +53,14 @@ def run():
                                 options=['L', 'END', 'QSA']
                             ))
     # AElfi folder protection
-    #build.routes.insert(0, Route(
-    #                            destination=SpecialDestination('-'),
-    #                            origins=[Regex('^.*$')],
-    #                            conditions=[
-    #                                Condition('&', Variable('filepath'),  Path('./_aelfi/?', flags='a'), negate=False)
-    #                            ],
-    #                            options=['F']
-    #                        ))
+    build.routes.insert(0, Route(
+                                destination=SpecialDestination('-'),
+                                origins=[Regex('^.*$')],
+                                conditions=[
+                                    Condition('&', Variable('filepath'),  Path('./_aelfi/[^lt]', flags='a'), negate=False)
+                                ],
+                                options=['F']
+                            ))
     # AElfi build file protection
     build.routes.insert(0, Route(
                                 destination=SpecialDestination('-'),
