@@ -367,6 +367,9 @@ class Build:
 
     @classmethod
     def from_file(cls, file_location: str):
+        with open(file_location) as file:
+            if not file.read().strip('\n \r'):
+                return cls()
         filestream = FileStream(file_location)
         lexer = BuildLexer(filestream)
         stream = CommonTokenStream(lexer)
