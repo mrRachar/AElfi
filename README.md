@@ -1,4 +1,6 @@
-# AElfi
+
+<p align="center"><img src='http://campars.net/AElfi/logo compass small.svg'/></p>
+
 A simple wrapper framework for Python 3 projects on Unix Apache2 installations
 
 *[Documentation](_aelfi/docs/main.md)*
